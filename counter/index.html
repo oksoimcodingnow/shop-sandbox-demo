@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="description" content="Shop Counter: the second tool of the Shop Sandbox concept prototype for a GrabSpark 2026 case-competition entry. Sample data; not a Grab product.">
+<title>Shop Counter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap">
+<style>
+/* The second tool of the same app as Shop Sandbox: same colours, type and phone frame. */
+:root {
+  --paper: #F2F7F6; --card: #FFFFFF; --ink: #0F2A3D; --muted: #536878; --line: #D6E3E6; --chip: #E7F0F2;
+  --accent: #0B6BCB; --accent-soft: #E1EFFC;
+  --gain: #07803C; --gain-soft: #DCF5E6; --loss: #B3302A; --loss-soft: #FBE4E1;
+  --bezel: #0F2A3D; --btn: #07873F; --btn-fg: #FFFFFF; --bar-sales: #2F7FD6;
+  --display: "IBM Plex Sans Thai", system-ui, sans-serif;
+  --body: "IBM Plex Sans Thai", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #07161C; --card: #0F232C; --ink: #E6F2F1; --muted: #9DB3B8; --line: #21404B; --chip: #17323C;
+    --accent: #62B2FF; --accent-soft: #11314E;
+    --gain: #3DDC84; --gain-soft: #0F3A26; --loss: #F2776D; --loss-soft: #42201C;
+    --bezel: #21404B; --btn: #2FD67B; --btn-fg: #04210F; --bar-sales: #6FB4F5;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #07161C; --card: #0F232C; --ink: #E6F2F1; --muted: #9DB3B8; --line: #21404B; --chip: #17323C;
+  --accent: #62B2FF; --accent-soft: #11314E;
+  --gain: #3DDC84; --gain-soft: #0F3A26; --loss: #F2776D; --loss-soft: #42201C;
+  --bezel: #21404B; --btn: #2FD67B; --btn-fg: #04210F; --bar-sales: #6FB4F5;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.5; }
+.num { font-variant-numeric: tabular-nums; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; }
+button { font: inherit; color: inherit; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.layout { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 400px); gap: 56px; justify-content: center; align-items: start; padding-block: 40px; padding-inline: 24px; }
+
+/* Brief */
+.brief { display: grid; gap: 20px; padding-top: 24px; }
+.eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+.brief h1 { font-size: 40px; line-height: 1.05; font-weight: 700; }
+.brief p { margin: 0; color: var(--muted); max-width: 60ch; }
+.loop { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; counter-reset: loop; }
+.loop li { display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: baseline; counter-increment: loop; }
+.loop li::before { content: counter(loop); font-size: 13px; color: var(--accent); border: 1px solid var(--accent); border-radius: 50%; width: 24px; height: 24px; display: grid; place-items: center; }
+.loop b { font-family: var(--display); font-weight: 600; }
+.assume { border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 8px; font-size: 13px; color: var(--muted); }
+.assume h2 { font-size: 14px; color: var(--ink); font-weight: 600; }
+.assume ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.disclaimer { font-size: 12px; color: var(--muted); border: 1px dashed var(--line); border-radius: 10px; padding: 10px 12px; }
+
+/* Phone */
+.phone { width: 100%; max-width: 400px; height: 820px; background: var(--card); border: 10px solid var(--bezel); border-radius: 40px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 30px 60px -30px rgba(8, 40, 50, .4); }
+.app-head { padding: 18px 18px 10px; border-bottom: 1px solid var(--line); background: var(--card); }
+.shop { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.shop-id { flex: 1; min-width: 0; }
+.shop-name { font-family: var(--display); font-weight: 600; font-size: 16px; }
+.shop-sub { font-size: 12px; color: var(--muted); }
+.streak { font-size: 12px; background: var(--gain-soft); color: var(--gain); border-radius: 999px; padding: 3px 10px; font-weight: 600; white-space: nowrap; }
+.app-scroll { flex: 1; overflow-y: auto; padding: 18px; display: grid; gap: 14px; align-content: start; }
+.bar { border-top: 1px solid var(--line); padding: 8px 12px; display: flex; gap: 6px; background: var(--card); }
+.tab { flex: 1; border: 0; background: none; border-radius: 10px; padding: 10px 4px; font-weight: 600; font-size: 13.5px; color: var(--muted); cursor: pointer; }
+.tab[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); }
+
+.btn { border: 0; border-radius: 12px; padding: 12px 16px; font-weight: 600; cursor: pointer; text-decoration: none; text-align: center; display: inline-block; }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn-main { background: var(--btn); color: var(--btn-fg); }
+.btn-ghost { background: var(--chip); color: var(--ink); }
+.btn-small { padding: 8px 12px; font-size: 13px; border-radius: 10px; justify-self: start; }
+.label { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+.muted { color: var(--muted); font-size: 13px; }
+.src { font-size: 11.5px; color: var(--muted); }
+.note { font-size: 13px; background: var(--paper); border-radius: 12px; padding: 10px 12px; }
+.linkbtn { color: var(--accent); font-weight: 600; font-size: 13.5px; text-decoration: none; justify-self: start; }
+.inshort { font-size: 14px; line-height: 1.4; font-weight: 600; padding: 9px 12px; border-radius: 12px; background: var(--accent-soft); border-left: 4px solid var(--accent); }
+.inshort .label { color: var(--accent); margin-right: 6px; }
+
+/* The switch between the two tools of the app */
+.tools { display: grid; grid-template-columns: 1fr 1fr; background: var(--chip); border-radius: 12px; padding: 3px; font-size: 13px; font-weight: 600; text-align: center; }
+.tools a, .tools span { padding: 7px 8px; border-radius: 10px; color: var(--muted); text-decoration: none; }
+.tools .on { background: var(--card); color: var(--ink); box-shadow: 0 1px 2px rgba(8, 40, 50, .12); }
+
+/* Sell */
+.menu { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.item { border: 1px solid var(--line); background: var(--card); border-radius: 14px; padding: 10px 12px; text-align: left; cursor: pointer; display: grid; gap: 2px; }
+.item:active { background: var(--accent-soft); border-color: var(--accent); }
+.item b { font-family: var(--display); font-size: 14.5px; font-weight: 600; line-height: 1.25; }
+.item .num { color: var(--muted); font-size: 13px; }
+.order { border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px; display: grid; gap: 8px; }
+.oline { display: grid; grid-template-columns: 1fr auto 30px; gap: 8px; align-items: center; font-size: 14px; }
+.minus { border: 0; background: var(--chip); border-radius: 8px; width: 30px; height: 30px; cursor: pointer; font-size: 18px; line-height: 1; }
+.ototal { display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid var(--line); padding-top: 8px; font-weight: 600; }
+.ototal b { font-size: 22px; }
+.pay { display: grid; grid-template-columns: 1fr 1.4fr; gap: 8px; }
+
+/* Today */
+.big-number { display: grid; gap: 4px; padding: 16px; border-radius: 16px; background: var(--paper); }
+.big-number .k { font-size: 13px; color: var(--muted); }
+.big-number .v { font-size: 34px; font-weight: 600; color: var(--gain); line-height: 1.1; }
+.chartbox { border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; display: grid; gap: 6px; }
+.chead { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.bands { display: grid; gap: 4px; align-items: end; }
+.bands.h8 { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+.bands.h7 { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.band { display: grid; gap: 2px; justify-items: center; align-content: end; }
+.band .bar { width: 100%; border-radius: 5px 5px 2px 2px; background: color-mix(in srgb, var(--bar-sales) 38%, transparent); }
+.band.peak .bar { background: var(--bar-sales); }
+.band .pct { font-size: 11px; color: var(--muted); }
+.band .lab { font-size: 10px; color: var(--muted); white-space: nowrap; }
+.band.peak .pct, .band.peak .lab { color: var(--accent); font-weight: 600; }
+.gapnote { font-size: 12.5px; }
+.split { height: 12px; border-radius: 999px; background: var(--chip); overflow: hidden; }
+.split span { display: block; height: 100%; background: var(--bar-sales); }
+
+/* Coach and Stages */
+.insight { border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px; display: grid; gap: 6px; }
+.insight b { font-family: var(--display); font-size: 16px; font-weight: 600; line-height: 1.25; }
+.insight .adv { font-size: 13px; color: var(--muted); }
+.insight .what { font-size: 13.5px; }
+.tagchip { font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; font-weight: 700; border-radius: 999px; padding: 2px 8px; width: max-content; }
+.tagchip.growth { background: var(--gain-soft); color: var(--gain); }
+.tagchip.cost { background: var(--accent-soft); color: var(--accent); }
+.stage { border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px; display: grid; gap: 6px; }
+.stage.here { border-color: var(--accent); background: var(--accent-soft); }
+.stage .top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.stage b { font-family: var(--display); font-size: 16px; font-weight: 600; }
+.stage .price { font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.stage.here .price { color: var(--accent); }
+.stage ul { margin: 0; padding-left: 18px; font-size: 13px; display: grid; gap: 2px; }
+.meter { height: 8px; border-radius: 999px; background: var(--chip); overflow: hidden; }
+.meter span { display: block; height: 100%; background: var(--gain); }
+
+@media (max-width: 860px) {
+  .layout { grid-template-columns: minmax(0, 1fr); gap: 32px; padding-block: 0 32px; padding-inline: 0; }
+  .phone { order: -1; max-width: none; height: auto; min-height: 100vh; min-height: 100dvh; border: 0; border-radius: 0; box-shadow: none; overflow: visible; }
+  .app-head { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 2; padding-inline: 16px; }
+  .app-scroll { overflow: visible; padding: 16px; }
+  .bar { position: sticky; bottom: 0; padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px)); z-index: 2; }
+  .brief { padding: 0 16px; }
+  .brief h1 { font-size: 32px; }
+}
+</style>
+
+<style>html, body { margin: 0; }</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="brief">
+    <div class="eyebrow">Concept prototype · the second tool</div>
+    <h1>Shop Counter</h1>
+    <p>A delivery platform sees only what is sold through it. In this sample shop that is about a fifth of the sales. Shop Counter is a free till on the owner's phone: it counts every sale at the counter, so the shop's whole month fills in by itself.</p>
+    <ol class="loop">
+      <li><span><b>Sell</b>: tap the drinks, take cash or a QR payment. The sale is counted.</span></li>
+      <li><span><b>Today</b>: cups by hour, the busiest hours, and how much of the shop the platform can see.</span></li>
+      <li><span><b>Coach</b>: what the count says about growing, with a button to rehearse it in Shop Sandbox before spending or borrowing.</span></li>
+      <li><span><b>Stages</b>: Start and Grow are free and unlocked by use. Scale is paid, for shops big enough to need staff, stock and branches.</span></li>
+    </ol>
+    <p>The coach suggests; the owner decides. A loan is suggested only as something to rehearse first.</p>
+    <a class="btn btn-main" href="https://oksoimcodingnow.github.io/shop-sandbox-demo/">Open Shop Sandbox</a>
+    <div class="assume">
+      <h2>How the numbers work</h2>
+      <ul>
+        <li>It is the same made-up shop as in Shop Sandbox. Prices and cups a day match it.</li>
+        <li>A month is 26 open days. Platform sales are the weekly platform orders from Shop Sandbox.</li>
+        <li>Cups by hour, the last 7 days, the queue and the walk-away figures are made up.</li>
+        <li>The second blender costs ฿14,000. Loan terms use 2.75% a month, the maximum Grab Thailand published for merchant cash loans in June 2025.</li>
+        <li>The stages, their conditions and the ฿299 price are our proposal, not a product or a price of any platform.</li>
+        <li>No payment is taken: "QR payment" only records the sale.</li>
+      </ul>
+    </div>
+    <p class="disclaimer">Made for a GrabSpark 2026 case-competition entry. Not affiliated with or made by Grab or any delivery platform. Every shop, price and neighbourhood figure is sample data.</p>
+  </aside>
+
+  <main class="phone" id="app" aria-label="Shop Counter app">
+    <header class="app-head">
+      <div class="shop">
+        <div class="shop-id">
+          <div class="shop-name">Matcha Corner</div>
+          <div class="shop-sub">Sample shop · Shop Counter</div>
+        </div>
+        <span class="streak" id="count">17 cups today</span>
+      </div>
+    </header>
+    <div class="app-scroll" id="screen"></div>
+    <footer class="bar" id="bar"></footer>
+  </main>
+</div>
+
+<script>
+(function () {
+  /* ---------- the same sample shop as Shop Sandbox: tools/check_counter.js fails if these drift apart ---------- */
+  const OPEN_DAYS = 26, K = 30 / 7;
+  const LOAN_RATE = 0.0275, BLENDER = 14000;
+  const MENU = [
+    { id: "matcha", name: "Matcha Latte", price: 100, weekly: 18, store: 10 },
+    { id: "coco", name: "Iced Coconut Matcha", price: 110, weekly: 12, store: 6 },
+    { id: "cocoa", name: "Cocoa", price: 70, weekly: 10, store: 5 },
+    { id: "americano", name: "Americano", price: 80, weekly: 7, store: 7 },
+    { id: "thaitea", name: "Thai Tea", price: 70, weekly: 6, store: 5 },
+    { id: "hojicha", name: "Hojicha Latte", price: 95, weekly: 4, store: 2 }
+  ];
+  const MATCHA_G = { matcha: 5, coco: 5 };   // grams of matcha powder a cup
+
+  /* ---------- sample data, made up: a usual day by hour, the week before, and today until 15:00 ---------- */
+  const HOURS = [["10", 2], ["11", 3], ["12", 5], ["13", 4], ["14", 3], ["15", 6], ["16", 7], ["17", 5]];
+  const PEAK_FROM = 5;                        // 15:00 onwards
+  const WEEK = [["Mon", 33], ["Tue", 36], ["Wed", 31], ["Thu", 38], ["Fri", 35], ["Sat", 37], ["Sun", 35]];
+  const SOLD_SO_FAR = { matcha: 5, coco: 3, cocoa: 2, americano: 4, thaitea: 2, hojicha: 1 };
+  const SALES_SO_FAR = 15, DELIVERY_TODAY = 9, QUEUE_DAYS = 5, LOST_CUPS = 4;
+  const SCALE_PRICE = 299, GROW_DAYS = 30, DAYS_COUNTED = 34, SKILLS_DONE = 3, SKILLS_ALL = 4;
+  const TABS = [["sell", "Sell"], ["today", "Today"], ["coach", "Coach"], ["stages", "Stages"]];
+  const DEEP = ["loan", "hours", "supplier"];   // Shop Sandbox cards the coach links to
+
+  let state = { tab: "sell", order: {}, sold: { ...SOLD_SO_FAR }, sales: SALES_SO_FAR, last: null, scaleOpen: false };
+
+  // The other tool of the same app. Relative on the public page and on a local server; absolute anywhere else.
+  const HOSTED = typeof location !== "undefined" && /github\.io$|^127\.0\.0\.1$|^localhost$/.test(location.hostname);
+  const SANDBOX = HOSTED ? "../" : "https://oksoimcodingnow.github.io/shop-sandbox-demo/";
+  const EXT = HOSTED ? "" : ` target="_blank" rel="noopener"`;
+
+  const baht = n => (n <= -0.5 ? "−" : "") + "฿" + Math.round(Math.abs(n)).toLocaleString("en-US");
+  const pctTxt = x => Math.round(x * 100) + "%";
+  const sum = (list, f) => list.reduce((t, x) => t + f(x), 0);
+
+  /* ---------- what the count adds up to ---------- */
+  const dayCups = sum(MENU, m => m.store), daySales = sum(MENU, m => m.store * m.price);
+  const monthStore = daySales * OPEN_DAYS, monthGrab = sum(MENU, m => m.weekly * m.price) * K;
+  const loanPay = n => BLENDER * LOAN_RATE / (1 - Math.pow(1 + LOAN_RATE, -n));
+  const matchaKg = sum(MENU, m => (MATCHA_G[m.id] || 0) * (m.store * OPEN_DAYS + m.weekly * K)) / 1000;
+  const today = () => ({ cups: sum(MENU, m => state.sold[m.id]), sales: sum(MENU, m => state.sold[m.id] * m.price) });
+  const orderCups = () => sum(MENU, m => state.order[m.id] || 0);
+  const orderTotal = () => sum(MENU, m => (state.order[m.id] || 0) * m.price);
+
+  function add(id) { state.order[id] = (state.order[id] || 0) + 1; state.last = null; }
+  function less(id) { if (state.order[id] > 1) state.order[id]--; else delete state.order[id]; }
+  function pay(how) {
+    if (!orderCups()) return;
+    state.last = { total: orderTotal(), how };
+    MENU.forEach(m => { state.sold[m.id] += state.order[m.id] || 0; });
+    state.sales++; state.order = {};
+  }
+
+  /* ---------- screens ---------- */
+  const tools = () => `<nav class="tools" aria-label="Your tools"><a href="${SANDBOX}"${EXT}>Sandbox</a><span class="on" aria-current="page">Counter</span></nav>`;
+  const rehearse = id => `<a class="btn btn-ghost btn-small" href="${SANDBOX}#card=${id}"${EXT}>Rehearse it in Shop Sandbox ›</a>`;
+
+  function screenSell() {
+    const t = today(), n = orderCups();
+    const lines = MENU.filter(m => state.order[m.id]).map(m => `<div class="oline"><span>${state.order[m.id]} × ${m.name}</span><span class="num">${baht(state.order[m.id] * m.price)}</span><button class="minus" data-act="less" data-v="${m.id}" aria-label="Remove one ${m.name}">−</button></div>`).join("");
+    return `
+      ${tools()}
+      ${state.last ? `<div class="inshort"><span class="label">Saved</span>Sale ${state.sales} today: ${baht(state.last.total)} by ${state.last.how}. Today so far: ${t.cups} cups, ${baht(t.sales)}.</div>` : ""}
+      <div class="menu">${MENU.map(m => `<button class="item" data-act="add" data-v="${m.id}"><b>${m.name}</b><span class="num">${baht(m.price)}</span></button>`).join("")}</div>
+      <div class="order"><div class="label">This order</div>
+        ${lines || `<span class="muted">Tap a drink to start.</span>`}
+        <div class="ototal"><span>Total</span><b class="num">${baht(orderTotal())}</b></div>
+        <div class="pay"><button class="btn btn-ghost" data-act="pay" data-v="cash" ${n ? "" : "disabled"}>Cash</button><button class="btn btn-main" data-act="pay" data-v="QR" ${n ? "" : "disabled"}>QR payment</button></div>
+      </div>
+      <span class="src">Every sale is counted for you, so there is nothing to type at night · demo: no payment is taken</span>`;
+  }
+
+  function bars(list, peakFrom) {
+    const top = Math.max(...list.map(x => x[1]));
+    return list.map(([label, c], i) => `<div class="band${i >= peakFrom ? " peak" : ""}"><span class="pct num">${c}</span><span class="bar" style="height:${Math.round(c / top * 40) + 4}px"></span><span class="lab">${label}</span></div>`).join("");
+  }
+
+  function screenToday() {
+    const t = today(), month = monthStore + monthGrab;
+    const best = MENU.reduce((a, m) => (state.sold[m.id] > state.sold[a.id] ? m : a), MENU[0]);
+    const peak = sum(HOURS.slice(PEAK_FROM), h => h[1]);
+    return `
+      <div class="big-number"><span class="k">Today so far at the counter</span><span class="v num">${t.cups} cups</span>
+        <span class="k">${baht(t.sales)} in ${state.sales} sales · best seller: ${best.name} · plus ${DELIVERY_TODAY} delivery orders</span></div>
+      <div class="chartbox"><div class="chead"><span class="label">A usual day at your counter</span><span class="src">cups by hour</span></div>
+        <div class="bands h8">${bars(HOURS.map(([h, c]) => [h + ":00", c]), PEAK_FROM)}</div>
+        <div class="gapnote"><b>Busiest: 15:00 to 18:00.</b> ${peak} of your ${dayCups} cups a day come in those three hours.</div></div>
+      <div class="chartbox"><div class="chead"><span class="label">What the platform can see</span><span class="src">a month</span></div>
+        <div class="split" role="img" aria-label="${pctTxt(monthGrab / month)} of sales are on the platform"><span style="width:${(monthGrab / month * 100).toFixed(1)}%"></span></div>
+        <div class="gapnote"><b>The platform sees ${baht(monthGrab)} of your ${baht(month)}.</b> The counter fills in the other ${baht(monthStore)}, so your month in Shop Sandbox needs no typing.</div>
+        <a class="linkbtn" href="${SANDBOX}"${EXT}>See your month in Shop Sandbox ›</a></div>
+      <div class="chartbox"><div class="chead"><span class="label">Last 7 days</span><span class="src">cups at the counter</span></div>
+        <div class="bands h7">${bars(WEEK, 99)}</div></div>
+      <span class="src">Sample shop · the hourly and daily counts are made up</span>`;
+  }
+
+  function screenCoach() {
+    const peak = sum(HOURS.slice(PEAK_FROM), h => h[1]), lastHour = HOURS[HOURS.length - 1][1], noon = HOURS[2][1];
+    return `
+      <div class="inshort"><span class="label">In short</span>Your counter is full at the peak. Rehearse a second blender before you spend or borrow.</div>
+      <div class="insight"><span class="tagchip growth">Growth</span><b>One blender is full from 15:00 to 18:00</b>
+        <span class="adv">${peak} of your ${dayCups} cups a day come in those hours. On ${QUEUE_DAYS} of the last 7 days the queue passed 8 minutes, and about ${LOST_CUPS} customers a day walked away.</span>
+        <span class="what">A second blender costs ${baht(BLENDER)}: about ${baht(loanPay(12))} a month over 12 months. You may qualify for a loan.</span>
+        ${rehearse("loan")}</div>
+      <div class="insight"><span class="tagchip growth">Growth</span><b>People still come in your last hour</b>
+        <span class="adv">You sell ${lastHour} cups between 17:00 and 18:00, ${lastHour >= noon ? "as many as" : "almost as many as"} at midday, and then you close.</span>
+        <span class="what">Two more hours might pay for the extra staff and power, or might not.</span>
+        ${rehearse("hours")}</div>
+      <div class="insight"><span class="tagchip cost">Cost</span><b>You use about ${matchaKg.toFixed(1)} kg of matcha a month</b>
+        <span class="adv">Counted from every matcha drink sold at the counter and on the platform.</span>
+        <span class="what">At that volume, verified suppliers quote less than your wholesale store.</span>
+        ${rehearse("supplier")}</div>
+      <div class="note">The coach suggests; you decide. Borrow only when the rehearsal shows it pays back and leaves 3 weeks of cash. The advice never depends on what you pay.</div>
+      <span class="src">From your counter and platform sales · the queue and walk-away figures are made up</span>`;
+  }
+
+  function screenStages() {
+    const list = items => `<ul>${items.map(x => `<li>${x}</li>`).join("")}</ul>`;
+    return `
+      <div class="big-number"><span class="k">Your stage</span><span class="v">Grow</span>
+        <span class="k">${DAYS_COUNTED} days counted · ${SKILLS_DONE} of ${SKILLS_ALL} skills practised in Shop Sandbox</span>
+        <div class="meter" role="img" aria-label="Stage 2 of 3"><span style="width:66%"></span></div></div>
+      <div class="stage"><div class="top"><b>Start</b><span class="price">Free · done</span></div>
+        ${list(["The till and the daily count", "Your true profit fills in by itself"])}</div>
+      <div class="stage here"><div class="top"><b>Grow</b><span class="price">Free · you are here</span></div>
+        ${list(["Coach insights from your count", "Your first capped test, half paid by the platform", "The loan check, only if you ask for it"])}
+        <span class="src">Unlocked by ${GROW_DAYS} days counted and 3 skills practised, not by paying</span></div>
+      <div class="stage"><div class="top"><b>Scale</b><span class="price">${baht(SCALE_PRICE)} a month · when you need it</span></div>
+        ${list(["Staff logins and shifts", "Stock, with low-stock alerts", "A second branch", "Export for your accountant"])}
+        <button class="btn btn-ghost btn-small" data-act="scale" aria-expanded="${state.scaleOpen}">${state.scaleOpen ? "Hide" : "See what Scale adds"}</button>
+        ${state.scaleOpen ? `<div class="note">For a shop big enough to hire and to open a second counter. Everything in Start and Grow stays free, and the loan check is never behind the fee. Demo only: nothing is charged.</div>` : ""}
+        <span class="src">Example price · our proposal</span></div>`;
+  }
+
+  const VIEWS = { sell: screenSell, today: screenToday, coach: screenCoach, stages: screenStages };
+  const screen = document.getElementById("screen"), bar = document.getElementById("bar"), countEl = document.getElementById("count");
+
+  function render(scrollTop) {
+    screen.innerHTML = VIEWS[state.tab]();
+    countEl.textContent = today().cups + " cups today";
+    bar.innerHTML = TABS.map(([id, name]) => `<button class="tab" data-act="tab" data-v="${id}" aria-pressed="${state.tab === id}">${name}</button>`).join("");
+    if (scrollTop) screen.scrollTop = 0;
+  }
+
+  document.getElementById("app").addEventListener("click", e => {
+    const t = e.target.closest("[data-act]");
+    if (!t) return;
+    const v = t.dataset.v;
+    switch (t.dataset.act) {
+      case "tab": state.tab = v; render(true); break;
+      case "add": add(v); render(); break;
+      case "less": less(v); render(); break;
+      case "pay": pay(v); render(true); break;
+      case "scale": state.scaleOpen = !state.scaleOpen; render(); break;
+    }
+  });
+
+  render();
+})();
+</script>
+
+</body>
+</html>

@@ -277,6 +277,12 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .cfacts { display: grid; gap: 2px; font-size: 12px; color: var(--muted); padding-top: 4px; }
 .inshort { font-size: 14px; line-height: 1.4; font-weight: 600; padding: 9px 12px; border-radius: 12px; background: var(--accent-soft); border-left: 4px solid var(--accent); }
 .inshort .label { color: var(--accent); margin-right: 6px; }
+/* The switch between the two tools of the app */
+.tools { display: grid; grid-template-columns: 1fr 1fr; background: var(--chip); border-radius: 12px; padding: 3px; font-size: 13px; font-weight: 600; text-align: center; }
+.tools a, .tools span { padding: 7px 8px; border-radius: 10px; color: var(--muted); text-decoration: none; }
+.tools .on { background: var(--card); color: var(--ink); box-shadow: 0 1px 2px rgba(8, 40, 50, .12); }
+a.linkbtn { text-decoration: none; display: inline-block; }
+.brief p a { color: var(--accent); }
 .baseline { font-size: 12.5px; color: var(--muted); }
 .opt { border: 1px solid var(--line); background: var(--card); border-radius: 14px; padding: 10px 12px; text-align: left; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: start; }
 .opt[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--accent-soft); }
@@ -343,6 +349,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
     </ol>
     <p>Every rehearsal practises one of four skills: know your true profit, read the market, test before you spend, plan for a shock. The coach suggests; the owner decides.</p>
     <p>One tap away: <b>My month</b>, where the money goes (fixed, operating and hidden costs, from platform data, receipt photos and a few numbers by voice), and <b>Ask the coach</b>, which stops off-topic questions at a topic gate.</p>
+    <p>Its second tool is <a href="https://oksoimcodingnow.github.io/shop-sandbox-demo/counter/">Shop Counter</a>, a free phone till that counts the sales at the counter, so the month fills in by itself.</p>
     <button class="btn btn-tour" id="briefTour">Take the 1-minute tour</button>
     <div class="assume">
       <h2>How the numbers work</h2>
@@ -471,6 +478,12 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
   const signed = n => (n >= 0.5 ? "+" : "") + baht(n);
   const pctTxt = x => Math.round(x * 100) + "%";
   const days = n => (n === Infinity ? "no limit" : Math.round(n) + " days");
+
+  // Shop Counter, the second tool of the same app. Relative on the public page and on a local server; absolute anywhere else.
+  const HOSTED = typeof location !== "undefined" && /github\.io$|^127\.0\.0\.1$|^localhost$/.test(location.hostname);
+  const COUNTER = HOSTED ? "counter/" : "https://oksoimcodingnow.github.io/shop-sandbox-demo/counter/";
+  const EXT = HOSTED ? "" : ` target="_blank" rel="noopener"`;
+  const toolsNav = () => `<nav class="tools" aria-label="Your tools"><span class="on" aria-current="page">Sandbox</span><a href="${COUNTER}"${EXT}>Counter</a></nav>`;
 
   /* ---------- the month model ---------- */
   function baseShop() {
@@ -831,6 +844,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
     const more = Object.entries(CARDS).filter(([, c]) => c.more)
       .map(([id, c]) => `<button class="more-row" data-act="card" data-v="${id}"><span>${c.title}</span><span>›</span></button>`).join("");
     return `
+      ${toolsNav()}
       <div class="big-number">
         <span class="k">This month the shop really keeps</span>
         <span class="v">${baht(m.truep)}</span>
@@ -854,6 +868,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
       <div class="section"><div class="label">This month · sample shop</div>
         <div class="headline">You see <span class="num">${baht(m.seen)}</span>. The shop really makes <span class="num ${m.truep >= 0 ? "gain-t" : "loss-t"}">${baht(m.truep)}</span>.</div></div>
       ${waterfall(m)}
+      <a class="linkbtn" href="${COUNTER}"${EXT}>In-shop sales are counted by Shop Counter ›</a>
       <details class="box"><summary>What's in the hidden costs</summary><div class="hidden-list">${hidden}</div>
         ${state.equipAdded ? "" : `<div style="padding-top:8px"><button class="btn btn-ghost btn-small" data-act="equip">Add your equipment value by voice</button></div>`}</details>
       <div class="reveal">
@@ -1296,6 +1311,10 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
     if (e.target.id === "consent") { state.consent = e.target.checked; render(); }
   });
   document.getElementById("briefTour").addEventListener("click", () => { document.getElementById("app").scrollIntoView({ block: "start", behavior: "smooth" }); startTour(); });
+
+  // Deep link from Shop Counter: #card=loan opens that card's Compare screen, with Today behind it.
+  const deep = typeof location !== "undefined" ? (/card=(\w+)/.exec(location.hash) || [])[1] : null;
+  if (deep && CARDS[deep]) { trail.push("notif", "today"); tourCard(deep); state.view = "compare"; }
 
   render();
 })();
