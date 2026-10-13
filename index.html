@@ -66,6 +66,7 @@ button:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px 
 .shop { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .shop-name { font-family: var(--display); font-weight: 600; font-size: 16px; }
 .shop-sub { font-size: 12px; color: var(--muted); }
+.shop-sub a { color: var(--accent); font-weight: 600; text-decoration: none; }
 
 .app-scroll { flex: 1; overflow-y: auto; padding: 18px; display: grid; gap: 18px; align-content: start; }
 .bar { border-top: 1px solid var(--line); padding: 12px 18px; display: flex; gap: 10px; background: var(--card); }
@@ -1315,6 +1316,9 @@ a.linkbtn { text-decoration: none; display: inline-block; }
   // Deep link from Shop Counter: #card=loan opens that card's Compare screen, with Today behind it.
   const deep = typeof location !== "undefined" ? (/card=(\w+)/.exec(location.hash) || [])[1] : null;
   if (deep && CARDS[deep]) { trail.push("notif", "today"); tourCard(deep); state.view = "compare"; }
+  else if (typeof location !== "undefined" && /^#today/.test(location.hash)) { trail.push("notif"); state.view = "today"; }
+  // The way back to the other tool, in the header of every screen.
+  document.getElementById("shopSub").innerHTML = `Sample shop · <a href="${COUNTER}"${EXT}>Counter ›</a>`;
 
   render();
 })();
