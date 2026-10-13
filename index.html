@@ -8,7 +8,7 @@
 <title>Shop Sandbox</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600&family=Bai+Jamjuree:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600;700&family=Sarabun:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: on wide screens a short brief on the left and the owner's phone on the right; on phones the app fills the screen and the brief follows below. */
 :root {
@@ -16,9 +16,9 @@
   --accent: #0B6BCB; --accent-soft: #E1EFFC;
   --gain: #07803C; --gain-soft: #DCF5E6; --loss: #B3302A; --loss-soft: #FBE4E1;
   --bezel: #0F2A3D; --btn: #07873F; --btn-fg: #FFFFFF; --bar-sales: #2F7FD6;
-  --display: "Bai Jamjuree", "Anuphan", system-ui, sans-serif;
-  --body: "Anuphan", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --display: "Prompt", "Sarabun", system-ui, sans-serif;
+  --body: "Sarabun", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "Sarabun", system-ui, sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -77,9 +77,9 @@ button:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px 
 
 .section { display: grid; gap: 10px; }
 .section > h2 { font-size: 18px; font-weight: 600; }
-.label { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.label { font-size: 12.5px; color: var(--muted); font-weight: 600; }
 .muted { color: var(--muted); font-size: 13px; }
-.src { font-size: 11px; font-family: var(--mono); color: var(--muted); }
+.src { font-size: 11.5px; font-family: var(--mono); color: var(--muted); }
 
 .reveal { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .stat { background: var(--paper); border-radius: 14px; padding: 12px; display: grid; gap: 2px; align-content: start; }
@@ -286,7 +286,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .opt .r { display: grid; text-align: right; }
 .opt .r .num { font-size: 17px; font-weight: 600; }
 .opt .r small { font-size: 11px; color: var(--muted); font-family: var(--mono); white-space: nowrap; }
-.pick { grid-column: 1 / -1; font-size: 11px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; color: var(--gain); }
+.pick { grid-column: 1 / -1; font-size: 12px; font-weight: 700; color: var(--gain); }
 .stars { display: flex; gap: 6px; }
 .stars button { border: 1px solid var(--line); background: var(--card); border-radius: 8px; width: 38px; height: 34px; cursor: pointer; font-size: 17px; color: var(--muted); }
 .stars button[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
