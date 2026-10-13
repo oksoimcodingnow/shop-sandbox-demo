@@ -275,7 +275,9 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .band.gap .pct, .band.gap .lab { color: var(--accent); font-weight: 600; }
 .gapnote { font-size: 12.5px; }
 .cfacts { display: grid; gap: 2px; font-size: 12px; color: var(--muted); padding-top: 4px; }
-.baseline { font-size: 13.5px; padding: 10px 12px; border-radius: 12px; background: var(--paper); }
+.inshort { font-size: 14px; line-height: 1.4; font-weight: 600; padding: 9px 12px; border-radius: 12px; background: var(--accent-soft); border-left: 4px solid var(--accent); }
+.inshort .label { color: var(--accent); margin-right: 6px; }
+.baseline { font-size: 12.5px; color: var(--muted); }
 .opt { border: 1px solid var(--line); background: var(--card); border-radius: 14px; padding: 10px 12px; text-align: left; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: start; }
 .opt[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--accent-soft); }
 .opt .l { display: grid; gap: 2px; min-width: 0; }
@@ -876,6 +878,9 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
     return `<div class="section"><h2>Ask the coach</h2><span class="muted">Tap a question. Every answer uses the shop's own numbers.</span></div>${chatCard(finish(baseShop()))}`;
   }
 
+  /* One sentence for the owner who reads nothing else. */
+  const inShort = t => `<div class="inshort"><span class="label">In short</span>${t}</div>`;
+
   function progress(stage) {
     const steps = isPlan(state.card) ? ["Compare", "Plan saved"] : ["Compare", "Try small", "Result"];
     return `<div class="progress">${steps.map((s, i) => i === stage ? `<b>${s}</b>` : `<span>${s}</span>`).join("<span>·</span>")}</div>`;
@@ -888,7 +893,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
     const set = (byId("matcha").price + byId("cocoa").price) * (1 - 0.1);
     const prices = MENU.map(m => m.price), top = Math.max(...ORDER_BANDS.map(b => b[1]));
     const above = ORDER_BANDS.slice(GAP_BAND + 1).reduce((t, b) => t + b[1], 0);
-    const bars = ORDER_BANDS.map(([label, share], i) => `<div class="band${i === GAP_BAND ? " gap" : ""}"><span class="pct num">${pctTxt(share)}</span><span class="bar" style="height:${Math.round(share / top * 30) + 4}px"></span><span class="lab">${label}</span></div>`).join("");
+    const bars = ORDER_BANDS.map(([label, share], i) => `<div class="band${i === GAP_BAND ? " gap" : ""}"><span class="pct num">${pctTxt(share)}</span><span class="bar" style="height:${Math.round(share / top * 24) + 4}px"></span><span class="lab">${label}</span></div>`).join("");
     return `<div class="customers"><div class="chead"><span class="label">Your customers</span><span class="src">per order, nearby</span></div>
       <div class="bands">${bars}</div>
       <div class="gapnote"><b>The gap: ฿140 to ฿179.</b> Only ${GAP_SHOPS} of ${PEER_SHOPS} shops offer anything there. A matcha + cocoa set at ${baht(set)} fits.</div>
@@ -911,10 +916,12 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
       <span class="src">Quality and on-time rates pooled from shops like yours · fresh milk waits for a cold chain · sample data</span>` : "";
     const sel = evalOpt(opts[state.option]);
     const peers = (PEERS[card.supply ? "supply" : opts[state.option].cfg.decision] || []).map(([n, v, good]) => `<div class="peer-row"><span>${n}</span><b class="num ${good ? "gain-t" : "loss-t"}">${v}</b></div>`).join("");
+    const pk = opts[pick], pkName = pk.short || pk.label, none = opts.find(x => x.resp === "none");
+    const short = `${state.card === "pricewar" ? "Don't match them. " : ""}Coach's ${isPlan(state.card) ? "plan" : "pick"}: ${card.supply ? pkName : pkName.charAt(0).toLowerCase() + pkName.slice(1)}, ${signed(evalOpt(pk).delta)} a month${none && none !== pk ? `, instead of ${signed(evalOpt(none).delta)} if you do nothing` : ""}.`;
     return `
       ${progress(0)}
-      <div class="section"><span class="tagchip ${card.tag.toLowerCase()}">${card.tag}</span><h2>${card.title}</h2><span class="muted">${card.ask}</span>${chips}</div>
-      <div class="baseline">Now the shop keeps <b class="num">${baht(base.truep)}</b> a month. Each option shows the change, likely and range.</div>
+      <div class="section"><span class="tagchip ${card.tag.toLowerCase()}">${card.tag}</span><h2>${card.title}</h2>${inShort(short)}${chips}</div>
+      <div class="baseline">You keep <b class="num">${baht(base.truep)}</b> a month now. Options show the change.</div>
       ${["pricewar", "price"].includes(state.card) ? customersCard() : ""}
       <div class="options">${rows}</div>
       <details class="box"><summary>Why? The numbers behind “${opts[state.option].short || opts[state.option].label}”</summary>
@@ -937,6 +944,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
     const seg = (act, vals, cur) => `<div class="seg">` + vals.map(([v, t]) => `<button data-act="${act}" data-v="${v}" aria-pressed="${v === cur}">${t}</button>`).join("") + `</div>`;
     return `
       ${progress(1)}
+      ${inShort(`Test it for ${c.days} days${c.decision === "promo" ? `, stop after ${state.cap} orders` : ""}. Worst case ${signed(worst)}, best case ${signed(best)}.`)}
       <div class="section"><h2>Try it small first</h2>
         <span class="muted">${how} for a few days${c.decision === "promo" ? ", with a cap on orders" : ""}, so a wrong guess can only cost a little.</span>
         <b>${selected().label}</b></div>
@@ -990,8 +998,12 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
         <span>You may qualify for a cash loan. Example terms: up to 2.75% a month.</span>
         <label class="check"><input type="checkbox" id="consent" ${state.consent ? "checked" : ""}><span>Share my sandbox numbers with the lending team so they can check. I can withdraw this any time.</span></label>
         <span class="muted">${state.consent ? "Demo only: nothing is sent." : "Nothing is shared unless you tick this."}</span></div>` : "";
+    const short = r.kind !== "test" ? "Your plan is saved. Nothing to do now: the coach reminds you when it happens."
+      : r.diff >= 0 ? `It worked: ${signed(r.diff)} in ${c.days} days. Keep it.`
+      : `It lost ${baht(-r.diff)} in ${c.days} days. Stop it: the small test kept the loss small.`;
     return `
       ${progress(isPlan(state.card) ? 1 : 2)}
+      ${inShort(short)}
       <div class="section"><div class="headline">${top}</div><span class="src">${line}</span></div>
       <div class="lesson"><div class="label">What this taught you</div><p>${lesson(r)}</p></div>
       ${rate}${loanBox}
