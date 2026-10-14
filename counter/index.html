@@ -174,7 +174,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
       <li><span><b>Today</b>: cups by hour, the busiest hours, and how much of the shop the platform can see.</span></li>
       <li><span><b>Stock</b>: every sale takes its ingredients off the shelf count, so the owner sees what is left and what runs out first.</span></li>
       <li><span><b>Coach</b>: what the count says about growing, with a button to rehearse it in Shop Sandbox before spending or borrowing.</span></li>
-      <li><span><b>Stages</b>: Start and Grow are free and unlocked by use. Scale is paid, for shops big enough to need staff, stock and branches.</span></li>
+      <li><span><b>Plans</b>: Starter is free for every shop. Grow (฿199 a month) and Scale (฿299 a month) each add tools, for shops with staff and regulars, then for a second branch.</span></li>
     </ol>
     <p>The coach suggests; the owner decides. A loan is suggested only as something to rehearse first.</p>
     <a class="btn btn-main" href="https://oksoimcodingnow.github.io/shop-sandbox-demo/">Open Shop Sandbox</a>
@@ -185,7 +185,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
         <li>A month is 26 open days. Platform sales are the weekly platform orders from Shop Sandbox.</li>
         <li>Cups by hour, the last 7 days, the queue, the walk-away figures and this morning's stock count are made up. What one cup uses matches Shop Sandbox.</li>
         <li>The second blender costs ฿14,000. Loan terms use 2.75% a month, the maximum Grab Thailand published for merchant cash loans in June 2025.</li>
-        <li>The stages, their conditions and the ฿299 price are our proposal, not a product or a price of any platform.</li>
+        <li>The three plans and their prices are our proposal, not a product or a price of any platform.</li>
         <li>No payment is taken: "QR payment" only records the sale.</li>
       </ul>
     </div>
@@ -234,8 +234,17 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
   const WEEK = [["Mon", 33], ["Tue", 36], ["Wed", 31], ["Thu", 38], ["Fri", 35], ["Sat", 37], ["Sun", 35]];
   const SOLD_SO_FAR = { matcha: 5, coco: 3, cocoa: 2, americano: 4, thaitea: 2, hojicha: 1 };
   const SALES_SO_FAR = 15, DELIVERY_TODAY = 9, QUEUE_DAYS = 5, LOST_CUPS = 4;
-  const SCALE_PRICE = 299, GROW_DAYS = 30, DAYS_COUNTED = 34, SKILLS_DONE = 3, SKILLS_ALL = 4;
-  const TABS = [["sell", "Sell"], ["today", "Today"], ["stock", "Stock"], ["coach", "Coach"], ["stages", "Stages"]];
+  // Three plans; each adds to the one before. Prices are examples, our proposal.
+  const TIERS = [
+    { id: "starter", name: "Starter", price: 0, who: "For micro shops: one owner, maybe one helper",
+      adds: ["The till: cash and QR, every sale counted", "Today's count and your stock count", "Your true profit, filled in Shop Sandbox", "Coach insights, a first capped test half paid by the platform, and the loan check if you ask"] },
+    { id: "grow", name: "Grow", price: 199, who: "For shops with staff and regulars",
+      adds: ["Low-stock alerts and a reorder list", "A stamp card that brings regulars back", "Sales by item and by hour, ready to export"] },
+    { id: "scale", name: "Scale", price: 299, who: "For shops opening a second counter",
+      adds: ["Staff logins and shifts", "A second branch in one view", "Export for your accountant and VAT"] }
+  ];
+  const TIER_NOW = "starter";
+  const TABS = [["sell", "Sell"], ["today", "Today"], ["stock", "Stock"], ["coach", "Coach"], ["stages", "Plans"]];
   const DEEP = ["loan", "hours", "supplier"];   // Shop Sandbox cards the coach links to
 
   let state = { tab: "sell", order: {}, sold: { ...SOLD_SO_FAR }, sales: SALES_SO_FAR, last: null, scaleOpen: false };
@@ -350,20 +359,15 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 
   function screenStages() {
     const list = items => `<ul>${items.map(x => `<li>${x}</li>`).join("")}</ul>`;
+    const now = TIERS.find(t => t.id === TIER_NOW);
     return `
-      <div class="big-number"><span class="k">Your stage</span><span class="v">Grow</span>
-        <span class="k">${DAYS_COUNTED} days counted · ${SKILLS_DONE} of ${SKILLS_ALL} skills practised in Shop Sandbox</span>
-        <div class="meter" role="img" aria-label="Stage 2 of 3"><span style="width:66%"></span></div></div>
-      <div class="stage"><div class="top"><b>Start</b><span class="price">Free · done</span></div>
-        ${list(["The till, the daily count and your stock count", "Your true profit fills in by itself"])}</div>
-      <div class="stage here"><div class="top"><b>Grow</b><span class="price">Free · you are here</span></div>
-        ${list(["Coach insights from your count", "Your first capped test, half paid by the platform", "The loan check, only if you ask for it"])}
-        <span class="src">Unlocked by ${GROW_DAYS} days counted and 3 skills practised, not by paying</span></div>
-      <div class="stage"><div class="top"><b>Scale</b><span class="price">${baht(SCALE_PRICE)} a month · when you need it</span></div>
-        ${list(["Staff logins and shifts", "Automatic reorder lists", "A second branch", "Export for your accountant"])}
-        <button class="btn btn-ghost btn-small" data-act="scale" aria-expanded="${state.scaleOpen}">${state.scaleOpen ? "Hide" : "See what Scale adds"}</button>
-        ${state.scaleOpen ? `<div class="note">For a shop big enough to hire and to open a second counter. Everything in Start and Grow stays free, and the loan check is never behind the fee. Demo only: nothing is charged.</div>` : ""}
-        <span class="src">Example price · our proposal</span></div>`;
+      <div class="big-number"><span class="k">Your plan</span><span class="v">${now.name} · ${now.price ? baht(now.price) + " a month" : "free"}</span>
+        <span class="k">Shop Sandbox, the till and the stock count stay free for every shop. Pay only when the shop is big enough to need more.</span></div>
+      ${TIERS.map((t, i) => `<div class="stage${t.id === TIER_NOW ? " here" : ""}"><div class="top"><b>${t.name}</b><span class="price">${t.price ? baht(t.price) + " a month" : "Free"}${t.id === TIER_NOW ? " · your plan" : ""}</span></div>
+        <span class="src">${t.who}</span>
+        ${i ? `<span class="label">Everything in ${TIERS[i - 1].name}, plus:</span>` : ""}
+        ${list(t.adds)}</div>`).join("")}
+      <div class="note">The coach's advice and the loan check are never behind a fee. Prices are examples, our proposal. Demo only: nothing is charged.</div>`;
   }
 
   const VIEWS = { sell: screenSell, today: screenToday, stock: screenStock, coach: screenCoach, stages: screenStages };
