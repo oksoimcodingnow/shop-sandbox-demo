@@ -6,37 +6,128 @@
 <meta name="robots" content="noindex">
 <meta name="description" content="Shop Sandbox and Shop Counter: concept prototypes for a GrabSpark 2026 case-competition entry. Sample data; not a Grab product.">
 <title>Matcha Corner tools</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;600;700&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap">
 <style>
-:root { --paper: #F2F7F6; --card: #FFFFFF; --ink: #0F2A3D; --muted: #536878; --line: #D6E3E6; --green: #07873F; --green-soft: #DCF5E6; --blue: #0B6BCB; --blue-soft: #E1EFFC; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) { --paper: #07161C; --card: #0F232C; --ink: #E6F2F1; --muted: #9DB3B8; --line: #21404B; --green: #2FD67B; --green-soft: #0F3A26; --blue: #62B2FF; --blue-soft: #11314E; color-scheme: dark; }
+:root {
+  --paper: #F2F7F6; --card: #FFFFFF; --ink: #0F2A3D; --muted: #536878; --line: #D6E3E6; --chip: #E7F0F2;
+  --green: #07873F; --green-2: #12B262; --green-soft: #DCF5E6;
+  --blue: #0B6BCB; --blue-2: #3A9BF2; --blue-soft: #E1EFFC;
+  --shadow: 0 18px 40px -24px rgba(8, 40, 50, .45);
 }
-:root[data-theme="dark"] { --paper: #07161C; --card: #0F232C; --ink: #E6F2F1; --muted: #9DB3B8; --line: #21404B; --green: #2FD67B; --green-soft: #0F3A26; --blue: #62B2FF; --blue-soft: #11314E; color-scheme: dark; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #07161C; --card: #0F232C; --ink: #E6F2F1; --muted: #9DB3B8; --line: #21404B; --chip: #17323C;
+    --green: #2FD67B; --green-2: #1FA862; --green-soft: #0F3A26; --blue: #62B2FF; --blue-2: #2F7FD6; --blue-soft: #11314E;
+    --shadow: 0 18px 40px -24px rgba(0, 0, 0, .7); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #07161C; --card: #0F232C; --ink: #E6F2F1; --muted: #9DB3B8; --line: #21404B; --chip: #17323C;
+  --green: #2FD67B; --green-2: #1FA862; --green-soft: #0F3A26; --blue: #62B2FF; --blue-2: #2F7FD6; --blue-soft: #11314E;
+  --shadow: 0 18px 40px -24px rgba(0, 0, 0, .7); color-scheme: dark;
+}
 * { box-sizing: border-box; }
 html, body { margin: 0; }
-body { background: var(--paper); color: var(--ink); font-family: "IBM Plex Sans Thai", system-ui, sans-serif; min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; }
-main { width: 100%; max-width: 420px; display: grid; gap: 14px; }
-.eyebrow { margin: 0; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--green); font-weight: 600; }
-h1 { margin: 0; font-size: 32px; line-height: 1.1; }
-.sub { margin: 0 0 6px; color: var(--muted); }
-.tool { display: grid; grid-template-columns: 52px 1fr; gap: 4px 14px; align-items: center; text-decoration: none; color: inherit; background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
-.tool:hover, .tool:focus-visible { border-color: var(--green); outline: none; }
-.ico { grid-row: span 2; width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; font-weight: 700; font-size: 20px; }
-.tool.sandbox .ico { background: var(--blue-soft); color: var(--blue); }
-.tool.counter .ico { background: var(--green-soft); color: var(--green); }
+body {
+  min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; padding: 28px 16px;
+  font-family: "IBM Plex Sans Thai", system-ui, sans-serif; color: var(--ink); line-height: 1.45;
+  background: radial-gradient(120% 60% at 50% -10%, var(--green-soft), transparent 60%), var(--paper);
+}
+main { width: 100%; max-width: 440px; display: grid; gap: 16px; }
+
+/* Header: the shop */
+.top { display: flex; align-items: center; gap: 12px; }
+.avatar { width: 48px; height: 48px; border-radius: 16px; display: grid; place-items: center; font-weight: 700; color: #fff; background: linear-gradient(135deg, var(--green-2), var(--green)); box-shadow: var(--shadow); }
+.who b { display: block; font-size: 18px; }
+.who span { font-size: 13px; color: var(--muted); }
+.badge { margin-left: auto; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--green); background: var(--green-soft); border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
+
+h1 { margin: 6px 0 0; font-size: 30px; line-height: 1.15; letter-spacing: -.01em; }
+.sub { margin: 0; color: var(--muted); }
+
+/* The one number that makes an owner say OMG */
+.peek { display: grid; gap: 2px; background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 14px 16px; box-shadow: var(--shadow); }
+.peek .k { font-size: 12.5px; color: var(--muted); }
+.peek .v { font-size: 30px; font-weight: 700; color: var(--green); font-variant-numeric: tabular-nums; }
+.peek .k b { color: var(--ink); }
+
+/* The two tools */
+.tools { display: grid; gap: 12px; }
+.tool {
+  position: relative; display: grid; grid-template-columns: 56px 1fr auto; gap: 2px 14px; align-items: center;
+  text-decoration: none; color: inherit; background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+  padding: 18px 16px; box-shadow: var(--shadow); overflow: hidden; transition: transform .15s ease, border-color .15s ease;
+}
+.tool::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 5px; }
+.tool.sandbox::before { background: linear-gradient(var(--blue-2), var(--blue)); }
+.tool.counter::before { background: linear-gradient(var(--green-2), var(--green)); }
+.tool:hover { transform: translateY(-2px); }
+.tool.sandbox:hover, .tool.sandbox:focus-visible { border-color: var(--blue); }
+.tool.counter:hover, .tool.counter:focus-visible { border-color: var(--green); }
+.tool:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.ico { grid-row: span 3; width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; }
+.sandbox .ico { background: var(--blue-soft); color: var(--blue); }
+.counter .ico { background: var(--green-soft); color: var(--green); }
+.ico svg { width: 28px; height: 28px; }
 .tool b { font-size: 18px; }
-.tool span:last-child { font-size: 14px; color: var(--muted); }
-.note { margin: 6px 0 0; font-size: 12px; color: var(--muted); }
+.tool .desc { font-size: 13.5px; color: var(--muted); }
+.tool .tags { font-size: 11.5px; font-weight: 600; letter-spacing: .02em; }
+.sandbox .tags { color: var(--blue); }
+.counter .tags { color: var(--green); }
+.go { grid-row: span 3; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 18px; font-weight: 700; background: var(--chip); }
+
+/* OMG, the three steps */
+.omg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.omg div { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 10px; text-align: center; }
+.omg b { display: block; font-size: 20px; color: var(--green); }
+.omg span { font-size: 12px; color: var(--muted); }
+
+.note { margin: 2px 0 0; font-size: 11.5px; color: var(--muted); text-align: center; }
+@media (prefers-reduced-motion: reduce) { .tool { transition: none; } .tool:hover { transform: none; } }
 </style>
 </head>
 <body>
 <main>
-  <p class="eyebrow">Concept prototype · GrabSpark 2026</p>
-  <h1>Matcha Corner</h1>
-  <p class="sub">One app, two tools for a small shop. Pick one to start.</p>
-  <a class="tool sandbox" href="sandbox/"><span class="ico">S</span><b>Shop Sandbox</b><span>See what your shop really keeps, rehearse a decision, try it small.</span></a>
-  <a class="tool counter" href="counter/"><span class="ico">C</span><b>Shop Counter</b><span>The free phone till: sell, count every sale, see your stock.</span></a>
+  <div class="top">
+    <div class="avatar" aria-hidden="true">MC</div>
+    <div class="who"><b>Matcha Corner</b><span>Ploy's café · sample shop</span></div>
+    <span class="badge">Concept prototype</span>
+  </div>
+
+  <h1>Good afternoon, Ploy.</h1>
+  <p class="sub">One app, two tools for your shop. Pick one to start.</p>
+
+  <div class="peek">
+    <span class="k">This month your shop really keeps</span>
+    <span class="v">฿11,439</span>
+    <span class="k">Not the <b>฿29,998</b> you see. Shop Sandbox shows you why.</span>
+  </div>
+
+  <nav class="tools" aria-label="Your tools">
+    <a class="tool sandbox" href="sandbox/">
+      <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></span>
+      <b>Shop Sandbox</b>
+      <span class="desc">See what you really keep, rehearse a decision, try it small.</span>
+      <span class="tags">Coach · Compare · Test</span>
+      <span class="go" aria-hidden="true">›</span>
+    </a>
+    <a class="tool counter" href="counter/">
+      <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 7h6M9 11h6M9 15h3"/></svg></span>
+      <b>Shop Counter</b>
+      <span class="desc">The free phone till: sell, count every sale, see your stock.</span>
+      <span class="tags">Sell · Count · Stock</span>
+      <span class="go" aria-hidden="true">›</span>
+    </a>
+  </nav>
+
+  <div class="omg" aria-label="OMG: own, map, go">
+    <div><b>O</b><span>Own your numbers</span></div>
+    <div><b>M</b><span>Map your move</span></div>
+    <div><b>G</b><span>Go small</span></div>
+  </div>
+
   <p class="note">Sample shop and simulated data. Not affiliated with or made by Grab or any delivery platform.</p>
 </main>
 </body>
