@@ -177,7 +177,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
       <li><span><b>Plans</b>: Starter is free for every shop. Grow (฿199 a month) and Scale (฿299 a month) each add tools, for shops with staff and regulars, then for a second branch.</span></li>
     </ol>
     <p>The coach suggests; the owner decides. A loan is suggested only as something to rehearse first.</p>
-    <a class="btn btn-main" href="https://oksoimcodingnow.github.io/shop-sandbox-demo/">Open Shop Sandbox</a>
+    <a class="btn btn-main" href="https://oksoimcodingnow.github.io/shop-sandbox-demo/sandbox/">Open Shop Sandbox</a>
     <div class="assume">
       <h2>How the numbers work</h2>
       <ul>
@@ -251,7 +251,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 
   // The other tool of the same app. Relative on the public page and on a local server; absolute anywhere else.
   const HOSTED = typeof location !== "undefined" && /github\.io$|^127\.0\.0\.1$|^localhost$/.test(location.hostname);
-  const SANDBOX = HOSTED ? "../" : "https://oksoimcodingnow.github.io/shop-sandbox-demo/";
+  const SANDBOX = HOSTED ? "../sandbox/" : "https://oksoimcodingnow.github.io/shop-sandbox-demo/sandbox/";
   const EXT = HOSTED ? "" : ` target="_blank" rel="noopener"`;
 
   const baht = n => (n <= -0.5 ? "−" : "") + "฿" + Math.round(Math.abs(n)).toLocaleString("en-US");

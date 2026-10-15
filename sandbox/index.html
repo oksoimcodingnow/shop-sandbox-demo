@@ -1,0 +1,1328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="description" content="Shop Sandbox: a concept prototype for a GrabSpark 2026 case-competition entry. Sample data; not a Grab product.">
+<title>Shop Sandbox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: on wide screens a short brief on the left and the owner's phone on the right; on phones the app fills the screen and the brief follows below. */
+:root {
+  --paper: #F2F7F6; --card: #FFFFFF; --ink: #0F2A3D; --muted: #536878; --line: #D6E3E6; --chip: #E7F0F2;
+  --accent: #0B6BCB; --accent-soft: #E1EFFC;
+  --gain: #07803C; --gain-soft: #DCF5E6; --loss: #B3302A; --loss-soft: #FBE4E1;
+  --bezel: #0F2A3D; --btn: #07873F; --btn-fg: #FFFFFF; --bar-sales: #2F7FD6;
+  --display: "IBM Plex Sans Thai", "IBM Plex Sans Thai", system-ui, sans-serif;
+  --body: "IBM Plex Sans Thai", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Sans Thai", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #07161C; --card: #0F232C; --ink: #E6F2F1; --muted: #9DB3B8; --line: #21404B; --chip: #17323C;
+    --accent: #62B2FF; --accent-soft: #11314E;
+    --gain: #3DDC84; --gain-soft: #0F3A26; --loss: #F2776D; --loss-soft: #42201C;
+    --bezel: #21404B; --btn: #2FD67B; --btn-fg: #04210F; --bar-sales: #6FB4F5;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #07161C; --card: #0F232C; --ink: #E6F2F1; --muted: #9DB3B8; --line: #21404B; --chip: #17323C;
+  --accent: #62B2FF; --accent-soft: #11314E;
+  --gain: #3DDC84; --gain-soft: #0F3A26; --loss: #F2776D; --loss-soft: #42201C;
+  --bezel: #21404B; --btn: #2FD67B; --btn-fg: #04210F; --bar-sales: #6FB4F5;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.5; }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; }
+button { font: inherit; color: inherit; }
+button:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.layout { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 400px); gap: 56px; justify-content: center; align-items: start; padding-block: 40px; padding-inline: 24px; }
+
+/* Brief */
+.brief { display: grid; gap: 20px; padding-top: 24px; }
+.eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+.brief h1 { font-size: 40px; line-height: 1.05; font-weight: 700; }
+.brief p { margin: 0; color: var(--muted); max-width: 60ch; }
+.loop { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; counter-reset: loop; }
+.loop li { display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: baseline; counter-increment: loop; }
+.loop li::before { content: counter(loop); font-family: var(--mono); font-size: 13px; color: var(--accent); border: 1px solid var(--accent); border-radius: 50%; width: 24px; height: 24px; display: grid; place-items: center; }
+.loop b { font-family: var(--display); font-weight: 600; }
+.assume { border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 8px; font-size: 13px; color: var(--muted); }
+.assume h2 { font-size: 14px; color: var(--ink); font-weight: 600; }
+.assume ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.disclaimer { font-size: 12px; color: var(--muted); border: 1px dashed var(--line); border-radius: 10px; padding: 10px 12px; }
+
+/* Phone */
+.phone { width: 100%; max-width: 400px; height: 820px; background: var(--card); border: 10px solid var(--bezel); border-radius: 40px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 30px 60px -30px rgba(8, 40, 50, .4); }
+.app-head { padding: 18px 18px 10px; border-bottom: 1px solid var(--line); display: grid; gap: 12px; background: var(--card); }
+.shop { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.shop-name { font-family: var(--display); font-weight: 600; font-size: 16px; }
+.shop-sub { font-size: 12px; color: var(--muted); }
+.shop-sub a { color: var(--accent); font-weight: 600; text-decoration: none; }
+
+.app-scroll { flex: 1; overflow-y: auto; padding: 18px; display: grid; gap: 18px; align-content: start; }
+.bar { border-top: 1px solid var(--line); padding: 12px 18px; display: flex; gap: 10px; background: var(--card); }
+.btn { border: 0; border-radius: 12px; padding: 12px 16px; font-weight: 600; cursor: pointer; }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn-main { flex: 1; background: var(--btn); color: var(--btn-fg); }
+.btn-ghost { background: var(--chip); }
+.btn-small { padding: 8px 12px; font-size: 13px; border-radius: 10px; }
+
+.section { display: grid; gap: 10px; }
+.section > h2 { font-size: 18px; font-weight: 600; }
+.label { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+.muted { color: var(--muted); font-size: 13px; }
+.src { font-size: 11.5px; font-family: var(--mono); color: var(--muted); }
+
+.reveal { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stat { background: var(--paper); border-radius: 14px; padding: 12px; display: grid; gap: 2px; align-content: start; }
+.stat .v { font-family: var(--mono); font-size: 20px; font-weight: 600; }
+.stat .k { font-size: 12px; color: var(--muted); }
+.stat.gain .v { color: var(--gain); }
+.stat.loss .v { color: var(--loss); }
+.headline { font-family: var(--display); font-size: 22px; font-weight: 600; line-height: 1.2; }
+.gain-t { color: var(--gain); }
+.loss-t { color: var(--loss); }
+
+/* Waterfall */
+.wf { display: grid; gap: 7px; }
+.wf-row { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) auto; gap: 8px; align-items: center; font-size: 13px; }
+.wf-name { display: grid; gap: 1px; min-width: 0; }
+.wf-track { position: relative; height: 14px; background: var(--chip); border-radius: 4px; overflow: hidden; }
+.wf-seg { position: absolute; top: 0; bottom: 0; border-radius: 3px; }
+.wf-seg.sales { background: var(--bar-sales); }
+.wf-seg.cost { background: var(--loss); opacity: .8; }
+.wf-seg.sub { background: var(--muted); }
+.wf-seg.total { background: var(--gain); }
+.wf-val { font-family: var(--mono); font-size: 12px; text-align: right; min-width: 66px; }
+.wf-row.strong { font-weight: 600; border-top: 1px dashed var(--line); padding-top: 7px; }
+.tag { display: inline-block; width: max-content; font-size: 10px; letter-spacing: .04em; text-transform: uppercase; border-radius: 999px; padding: 1px 7px; font-weight: 600; }
+.tag.grab { background: var(--chip); color: var(--ink); }
+.tag.you { background: var(--accent-soft); color: var(--accent); }
+.tag.est { border: 1px dashed var(--muted); color: var(--muted); }
+
+.hidden-list { display: grid; gap: 6px; padding-top: 6px; font-size: 13px; }
+.hidden-list div { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; align-items: center; }
+details.box { border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; }
+details.box summary { cursor: pointer; font-weight: 600; font-size: 14px; }
+
+.meter { height: 8px; background: var(--chip); border-radius: 8px; overflow: hidden; }
+.meter span { display: block; height: 100%; background: var(--accent); }
+.complete { border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: grid; gap: 8px; }
+.complete-top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.check-list { display: grid; gap: 4px; font-size: 13px; }
+.check-list div { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+
+.bench { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.bench-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; padding: 8px 12px; border-top: 1px solid var(--line); font-size: 13px; align-items: center; }
+.bench-row:first-child { border-top: 0; }
+.bench-row .num { font-weight: 600; }
+
+.vis { background: var(--paper); border-radius: 14px; padding: 12px; display: grid; gap: 6px; }
+.vis-score { display: flex; align-items: baseline; gap: 8px; }
+.vis-score .num { font-size: 24px; font-weight: 600; }
+.vis ol { margin: 0; padding-left: 18px; display: grid; gap: 3px; font-size: 13px; }
+
+.coach { display: grid; gap: 8px; }
+.coach details { background: var(--paper); border-radius: 14px; padding: 10px 12px; }
+.coach summary { cursor: pointer; list-style: none; display: grid; grid-template-columns: 28px 1fr; gap: 8px; font-size: 14px; font-weight: 500; }
+.coach summary::-webkit-details-marker { display: none; }
+.coach .ico { width: 28px; height: 28px; border-radius: 8px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; font-family: var(--mono); font-weight: 600; font-size: 13px; }
+.coach .body { padding: 8px 0 2px 36px; font-size: 13px; color: var(--muted); display: grid; gap: 6px; }
+
+.costcard { border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: grid; gap: 10px; }
+.costcard-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.receipt { font-family: var(--mono); font-size: 12px; border: 1px dashed var(--line); border-radius: 8px; padding: 10px 12px; display: grid; gap: 3px; background: var(--paper); }
+.receipt div { display: flex; justify-content: space-between; gap: 10px; }
+.voice { font-size: 13px; background: var(--accent-soft); border-radius: 10px; padding: 8px 10px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 6px 12px; font-size: 13px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--card); border-color: var(--ink); }
+.chip:disabled { opacity: .5; cursor: default; border-style: dashed; }
+.options { display: grid; gap: 8px; }
+.option { border: 1px solid var(--line); background: var(--card); border-radius: 14px; padding: 10px 12px; text-align: left; cursor: pointer; display: grid; gap: 2px; }
+.option b { font-family: var(--display); font-weight: 600; }
+.option span { font-size: 13px; color: var(--muted); }
+.option[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--accent-soft); }
+.option .row { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+.option .row .num { font-size: 14px; font-weight: 600; color: var(--ink); }
+.kind { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; color: var(--muted); }
+.slider { display: grid; gap: 6px; }
+.slider-top { display: flex; justify-content: space-between; align-items: baseline; }
+.slider-top .num { font-size: 18px; font-weight: 600; }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; }
+.check input { margin-top: 3px; accent-color: var(--accent); }
+.preview { border-radius: 14px; background: var(--paper); padding: 12px; display: grid; gap: 4px; font-size: 13px; }
+.preview .big { font-family: var(--mono); font-size: 16px; font-weight: 600; }
+.seg { display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); gap: 6px; }
+.seg button { border: 1px solid var(--line); background: var(--card); border-radius: 10px; padding: 8px 6px; cursor: pointer; font-size: 13px; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--card); border-color: var(--ink); }
+
+.pill { display: inline-flex; align-self: start; justify-self: start; font-size: 12px; font-weight: 600; border-radius: 999px; padding: 3px 10px; }
+.pill.gain { background: var(--gain-soft); color: var(--gain); }
+.pill.loss { background: var(--loss-soft); color: var(--loss); }
+.pill.mixed { background: var(--accent-soft); color: var(--accent); }
+
+.chart { width: 100%; height: auto; display: block; }
+.chart .lbl { fill: var(--muted); font-family: var(--body); font-size: 11px; }
+.chart .val { fill: var(--ink); font-family: var(--mono); font-size: 11px; font-weight: 600; }
+.chart .zero { stroke: var(--muted); stroke-width: 1; }
+.chart .b-base { fill: var(--muted); opacity: .45; }
+.chart .b-gain { fill: var(--gain); }
+.chart .b-loss { fill: var(--loss); }
+.chart .whisk { stroke: var(--ink); stroke-width: 1.5; }
+
+.facts { margin: 0; display: grid; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.facts div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; padding: 8px 12px; border-top: 1px solid var(--line); font-size: 13px; }
+.facts div:first-child { border-top: 0; }
+.facts div.strong { font-weight: 600; background: var(--paper); }
+.facts dt { color: var(--muted); }
+.facts div.strong dt { color: var(--ink); }
+.facts dd { margin: 0; font-family: var(--mono); text-align: right; }
+
+.peer { background: var(--paper); border-radius: 14px; padding: 12px; display: grid; gap: 6px; }
+.peer-row { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; }
+.suggest { border: 1px solid var(--accent); border-radius: 14px; padding: 12px; display: grid; gap: 8px; background: var(--accent-soft); }
+.suggest p { margin: 0; font-size: 14px; }
+.warn { border-left: 3px solid var(--accent); padding: 4px 0 4px 12px; font-size: 13px; }
+.note { font-size: 13px; background: var(--paper); border-radius: 12px; padding: 10px 12px; }
+
+.risk { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.lesson { border-left: 3px solid var(--accent); padding: 4px 0 4px 12px; display: grid; gap: 4px; }
+.lesson p { margin: 0; font-size: 14px; }
+.assign { border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: grid; gap: 4px; }
+.assign.done { border-color: var(--gain); background: var(--gain-soft); }
+.assign p { margin: 0; font-weight: 600; }
+.assign span { font-size: 13px; color: var(--muted); }
+.consent { border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: grid; gap: 8px; }
+.skills { display: grid; gap: 6px; }
+.skill { display: grid; grid-template-columns: 24px 1fr; gap: 10px; align-items: start; font-size: 13px; }
+.skill .tick { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--line); display: grid; place-items: center; font-size: 12px; color: transparent; }
+.skill.got .tick { background: var(--gain); border-color: var(--gain); color: var(--card); }
+.skill b { display: block; font-weight: 600; }
+.skill span { color: var(--muted); }
+.tiny { font-size: 11px; color: var(--muted); text-align: center; }
+
+.chat { border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: grid; gap: 10px; }
+.convo { display: grid; gap: 10px; }
+.chat-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.chat-qs { display: grid; gap: 6px; }
+.chatq { border: 1px solid var(--line); background: var(--card); border-radius: 12px; padding: 8px 10px; text-align: left; cursor: pointer; display: grid; gap: 1px; font-size: 13px; }
+.chatq .th { color: var(--muted); font-size: 12px; }
+.chatq[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--accent-soft); }
+.bubble { border-radius: 14px; padding: 9px 12px; font-size: 13px; max-width: 92%; }
+.bubble.me { justify-self: end; background: var(--ink); color: var(--card); border-bottom-right-radius: 4px; }
+.bubble.coach { justify-self: start; background: var(--paper); border-bottom-left-radius: 4px; display: grid; gap: 6px; }
+.trace { font-family: var(--mono); font-size: 11px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; }
+.trace .ok { color: var(--gain); font-weight: 600; }
+.trace .no { color: var(--loss); font-weight: 600; }
+
+.lock { background: var(--ink); color: var(--card); border-radius: 22px; padding: 26px 14px 14px; display: grid; gap: 12px; text-align: center; }
+.lock-time { font-family: var(--mono); font-size: 46px; font-weight: 500; line-height: 1; }
+.lock-date { font-size: 13px; opacity: .8; }
+.notif { text-align: left; background: var(--card); color: var(--ink); border: 0; border-radius: 16px; padding: 12px 14px; display: grid; gap: 4px; cursor: pointer; }
+.notif .app { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+.notif span:last-child { font-size: 13px; color: var(--muted); }
+
+.skills-row { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--muted); padding: 0 4px; margin-top: -6px; }
+.skills-row b { color: var(--ink); font-weight: 600; margin-left: auto; }
+.dots { display: inline-flex; gap: 5px; }
+.dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--line); display: block; }
+.dots i.on { background: var(--gain); }
+.skill { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; align-items: center; }
+.skill .label { grid-column: 1 / -1; }
+.skill b { font-family: var(--display); font-weight: 600; }
+.skill .n { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+.streak { font-size: 12px; background: var(--gain-soft); color: var(--gain); border-radius: 999px; padding: 3px 10px; font-weight: 600; white-space: nowrap; }
+.big-number { display: grid; gap: 4px; padding: 16px; border-radius: 16px; background: var(--paper); }
+.big-number .k { font-size: 13px; color: var(--muted); }
+.big-number .v { font-family: var(--mono); font-size: 36px; font-weight: 600; color: var(--gain); line-height: 1.1; }
+.linkbtn { background: none; border: 0; padding: 4px 0 0; color: var(--accent); font-weight: 600; cursor: pointer; justify-self: start; font-size: 14px; }
+.cards { display: grid; gap: 10px; }
+.ccard { border: 1px solid var(--line); background: var(--card); border-radius: 16px; padding: 12px 14px; text-align: left; cursor: pointer; display: grid; gap: 4px; }
+.ccard:hover { border-color: var(--accent); }
+.ccard .top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.ccard .top .num { font-size: 15px; font-weight: 600; }
+.ccard b { font-family: var(--display); font-size: 16px; font-weight: 600; line-height: 1.25; }
+.ccard .adv { font-size: 13px; color: var(--muted); }
+.tagchip { font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; font-weight: 700; border-radius: 999px; padding: 2px 8px; width: max-content; }
+.tagchip.growth { background: var(--gain-soft); color: var(--gain); }
+.tagchip.cost { background: var(--accent-soft); color: var(--accent); }
+.tagchip.resilience { background: var(--chip); color: var(--ink); }
+.more summary { font-size: 14px; }
+.more-list { display: grid; gap: 6px; padding-top: 8px; }
+.more-row { border: 1px solid var(--line); background: var(--card); border-radius: 12px; padding: 9px 12px; text-align: left; cursor: pointer; font-size: 14px; display: flex; justify-content: space-between; gap: 8px; }
+.progress { font-size: 12px; color: var(--muted); display: flex; gap: 6px; flex-wrap: wrap; }
+.progress b { color: var(--ink); }
+.customers { border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; display: grid; gap: 6px; }
+.chead { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.customers summary { font-size: 12px; color: var(--accent); font-weight: 600; cursor: pointer; }
+.bands { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; align-items: end; }
+.band { display: grid; gap: 2px; justify-items: center; align-content: end; }
+.band .bar { width: 100%; border-radius: 5px 5px 2px 2px; background: var(--bar-sales); }
+.band .pct { font-size: 11px; color: var(--muted); }
+.band .lab { font-size: 10px; color: var(--muted); white-space: nowrap; }
+.band.gap .bar { background: var(--accent-soft); outline: 2px dashed var(--accent); outline-offset: -2px; }
+.band.gap .pct, .band.gap .lab { color: var(--accent); font-weight: 600; }
+.gapnote { font-size: 12.5px; }
+.cfacts { display: grid; gap: 2px; font-size: 12px; color: var(--muted); padding-top: 4px; }
+.inshort { font-size: 14px; line-height: 1.4; font-weight: 600; padding: 9px 12px; border-radius: 12px; background: var(--accent-soft); border-left: 4px solid var(--accent); }
+.inshort .label { color: var(--accent); margin-right: 6px; }
+/* The switch between the two tools of the app */
+.tools { display: grid; grid-template-columns: 1fr 1fr; background: var(--chip); border-radius: 12px; padding: 3px; font-size: 13px; font-weight: 600; text-align: center; }
+.tools a, .tools span { padding: 7px 8px; border-radius: 10px; color: var(--muted); text-decoration: none; }
+.tools .on { background: var(--card); color: var(--ink); box-shadow: 0 1px 2px rgba(8, 40, 50, .12); }
+a.linkbtn { text-decoration: none; display: inline-block; }
+.brief p a { color: var(--accent); }
+.baseline { font-size: 12.5px; color: var(--muted); }
+.opt { border: 1px solid var(--line); background: var(--card); border-radius: 14px; padding: 10px 12px; text-align: left; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: start; }
+.opt[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--accent-soft); }
+.opt .l { display: grid; gap: 2px; min-width: 0; }
+.opt .l b { font-family: var(--display); font-weight: 600; }
+.opt .l span { font-size: 12.5px; color: var(--muted); }
+.opt .r { display: grid; text-align: right; }
+.opt .r .num { font-size: 17px; font-weight: 600; }
+.opt .r small { font-size: 11px; color: var(--muted); font-family: var(--mono); white-space: nowrap; }
+.pick { grid-column: 1 / -1; font-size: 12px; font-weight: 700; color: var(--gain); }
+.stars { display: flex; gap: 6px; }
+.stars button { border: 1px solid var(--line); background: var(--card); border-radius: 8px; width: 38px; height: 34px; cursor: pointer; font-size: 17px; color: var(--muted); }
+.stars button[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+
+.phone { position: relative; }
+.shop-id { flex: 1; min-width: 0; }
+.hback { border: 0; background: var(--chip); color: var(--ink); width: 34px; height: 34px; border-radius: 10px; font-size: 22px; line-height: 1; cursor: pointer; flex: none; }
+.hback[hidden] { display: none; }
+.tour-chip { border: 1px solid var(--accent); background: none; color: var(--accent); border-radius: 999px; padding: 3px 10px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.tour-hi { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 14px; }
+.tour-tip { position: absolute; left: 12px; right: 12px; bottom: 78px; z-index: 5; background: var(--ink); color: var(--card); border-radius: 16px; padding: 14px 16px 12px; display: grid; gap: 6px; box-shadow: 0 16px 40px -12px rgba(0, 0, 0, .5); }
+.tour-tip[hidden] { display: none; }
+.tour-tip .tstep { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; opacity: .7; font-weight: 700; }
+.tour-tip b { font-family: var(--display); font-size: 16px; font-weight: 600; }
+.tour-tip p { margin: 0; font-size: 13.5px; line-height: 1.45; opacity: .92; }
+.tour-tip .tbtns { display: flex; gap: 8px; justify-content: flex-end; padding-top: 4px; }
+.tour-tip button { border: 0; border-radius: 10px; padding: 8px 14px; font-weight: 600; cursor: pointer; font-size: 13px; }
+.tour-tip .tskip { background: none; color: var(--card); opacity: .75; margin-right: auto; padding-left: 0; }
+.tour-tip .tprev { background: color-mix(in srgb, var(--card) 18%, transparent); color: var(--card); }
+.tour-tip .tnext { background: var(--btn); color: var(--btn-fg); }
+.brief .btn-tour { justify-self: start; }
+.brief .btn-tour { background: var(--btn); color: var(--btn-fg); }
+
+@media (max-width: 860px) {
+  .tour-tip { position: fixed; bottom: 84px; left: 12px; right: 12px; }
+  .layout { grid-template-columns: minmax(0, 1fr); gap: 32px; padding-block: 0 32px; padding-inline: 0; }
+  .phone { order: -1; max-width: none; height: auto; min-height: 100vh; min-height: 100dvh; border: 0; border-radius: 0; box-shadow: none; overflow: visible; }
+  .app-head { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 2; padding-inline: 16px; }
+  .app-scroll { overflow: visible; padding: 16px; }
+  .bar { position: sticky; bottom: 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 2; }
+  .brief { padding: 0 16px; }
+  .brief h1 { font-size: 32px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .app-scroll > * { animation: rise .25s ease-out both; }
+  @keyframes rise { from { transform: translateY(6px); opacity: .6; } to { transform: none; opacity: 1; } }
+}
+</style>
+
+<style>html, body { margin: 0; }</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="brief">
+    <div class="eyebrow">Concept prototype</div>
+    <h1>Shop Sandbox</h1>
+    <p>Small restaurants see their sales, not what is left after rent, wages, waste and their own unpaid time. Shop Sandbox shows an owner their whole business, then lets them rehearse a decision or a shock before it costs real money.</p>
+    <ol class="loop">
+      <li><span><b>Notification</b>: the coach speaks up when a decision is due, such as a price war nearby or a cost rise.</span></li>
+      <li><span><b>Today</b>: one number, what the shop really keeps, and the coach's cards: a price war, a cheaper supplier, milk up 20%, the 60/40 scheme ending, and more ideas.</span></li>
+      <li><span><b>Compare</b>: two to four options, each with one number, and what customers nearby pay per order. The coach picks the best result even if customers react badly.</span></li>
+      <li><span><b>Try small</b>: a capped test on the platform, or a saved plan for a shock.</span></li>
+      <li><span><b>Result</b>: what happened, the lesson, the skill it practised and a learning streak.</span></li>
+    </ol>
+    <p>Every rehearsal practises one of four skills: know your true profit, read the market, test before you spend, plan for a shock. The coach suggests; the owner decides.</p>
+    <p>One tap away: <b>My month</b>, where the money goes (fixed, operating and hidden costs, from platform data, receipt photos and a few numbers by voice), and <b>Ask the coach</b>, which stops off-topic questions at a topic gate.</p>
+    <p>Its second tool is <a href="https://oksoimcodingnow.github.io/shop-sandbox-demo/counter/">Shop Counter</a>, a free phone till that counts the sales at the counter, so the month fills in by itself.</p>
+    <button class="btn btn-tour" id="briefTour">Take the 1-minute tour</button>
+    <div class="assume">
+      <h2>How the numbers work</h2>
+      <ul>
+        <li>The shop is made up. A month is 30 days with 26 open days.</li>
+        <li>Commission is 30% plus 7% VAT on it, charged on the price after the shop's own discount. The basis is our assumption.</li>
+        <li>Staff earn ฿60 an hour plus 5% employer social security.</li>
+        <li>Electricity is estimated from the national average rate of ฿3.95 a unit before VAT (Sep to Dec 2026).</li>
+        <li>Hidden costs: waste at 4% of ingredients, refunds at 1% of platform sales, staff drinks, and a ฿250,000 fit-out wearing out over 5 years. All are estimates.</li>
+        <li>The owner's fair wage is set at ฿12,000 a month. That is our assumption.</li>
+        <li>Demand responds to price with an elasticity of 0.8, 1.6 or 2.4 on the platform, and 60% of that in the shop. The lifts from longer hours, help, the blender and the new drink are our assumptions.</li>
+        <li>Loan terms use 2.75% a month, the maximum Grab Thailand published for merchant cash loans in June 2025.</li>
+        <li>Wongnai's own example coffee shop makes ฿10,000 a month on ฿180,000 of sales, before counting its ฿1.1m set-up cost (Wongnai for Business, 29 Aug 2025).</li>
+        <li>Test results, receipt reading and voice input are simulated. The coach chat is scripted; its gate scores are illustrative.</li>
+        <li>The order-value bands, the repeat-customer rates and the busiest hours are made up.</li>
+        <li>Suppliers, their prices and ratings, and the ฿40 delivery fee are made up. Fresh milk is held back until a cold chain exists.</li>
+        <li>Off-topic messages are stopped by a topic gate, a small model that compares each message with shop questions, before they reach the main model.</li>
+      </ul>
+    </div>
+    <p class="disclaimer">Made for a GrabSpark 2026 case-competition entry. Not affiliated with or made by Grab or any delivery platform. Every shop, price and neighbourhood figure is sample data.</p>
+  </aside>
+
+  <main class="phone" id="app" aria-label="Shop Sandbox app">
+    <header class="app-head">
+      <div class="shop">
+        <button class="hback" id="hback" data-act="back" aria-label="Back" hidden>‹</button>
+        <div class="shop-id">
+          <div class="shop-name">Matcha Corner</div>
+          <div class="shop-sub" id="shopSub">Sample shop</div>
+        </div>
+        <button class="tour-chip" data-act="tour" aria-label="Take the tour">Tour</button>
+        <span class="streak" id="streak">Streak 3 days</span>
+      </div>
+    </header>
+    <div class="app-scroll" id="screen"></div>
+    <footer class="bar" id="bar"></footer>
+    <div class="tour-tip" id="tourTip" role="dialog" aria-live="polite" hidden></div>
+  </main>
+</div>
+
+<script>
+(function () {
+  /* ---------- sample shop and assumptions ---------- */
+  const FEE = 0.30 * 1.07, SSO = 0.05, WASTE = 0.04, REFUND = 0.01, OPEN_DAYS = 26, K = 30 / 7;
+  const LOAN_RATE = 0.0275, BLENDER = 14000;
+  const MENU = [
+    { id: "matcha", name: "Matcha Latte", th: "มัทฉะลาเต้", price: 100, cost: 38, weekly: 18, store: 10, milk: 0.23 },
+    { id: "coco", name: "Iced Coconut Matcha", th: "มัทฉะมะพร้าวเย็น", price: 110, cost: 42, weekly: 12, store: 6, milk: 0 },
+    { id: "cocoa", name: "Cocoa", th: "โกโก้", price: 70, cost: 22, weekly: 10, store: 5, milk: 0.3 },
+    { id: "americano", name: "Americano", th: "อเมริกาโน่", price: 80, cost: 18, weekly: 7, store: 7, milk: 0 },
+    { id: "thaitea", name: "Thai Tea", th: "ชาไทย", price: 70, cost: 20, weekly: 6, store: 5, milk: 0.3 },
+    { id: "hojicha", name: "Hojicha Latte", th: "โฮจิฉะลาเต้", price: 95, cost: 36, weekly: 4, store: 2, milk: 0.25 }
+  ];
+  const ADDONS = [
+    { id: "shot", name: "Extra matcha shot", cost: 6, value: 20 },
+    { id: "jelly", name: "Coconut jelly", cost: 4, value: 15 },
+    { id: "cookie", name: "Butter cookie", cost: 9, value: 25 }
+  ];
+  const ELAST = { low: 0.8, likely: 1.6, high: 2.4 };
+  const KEYS = ["low", "likely", "high"];
+  const RECEIPT = [["Matcha powder, 100 g", 450], ["Fresh milk, 2 L", 98], ["Cups and lids, 50", 120], ["Ice, 1 bag", 40], ["Syrup and straws", 85]];
+  const MATCHA_COST = [["Matcha, 5 g", 22.5], ["Milk, 180 ml", 8.8], ["Cup and lid", 2.4], ["Ice", 1.0], ["Syrup and straw", 3.3]];
+  // Supplier marketplace (B2B), sample data. `use` is grams or sets per cup by drink; "*" means every drink.
+  const DELIVERY_FEE = 40;
+  const SUPPLIES = {
+    matcha: {
+      name: "Matcha powder", unit: "100 g", unitAmount: 100, current: 450, currentFrom: "Wholesale store, your receipt 9 Oct",
+      use: { matcha: 5, coco: 5 }, usesText: "5 g in every matcha latte and iced coconut matcha", deliveries: 4,
+      suppliers: [
+        { id: "ntc", name: "Northern Tea Collective", price: 398, quality: 4.6, ontime: 0.97, delivery: "next day", minOrder: "500 g", shops: 38 },
+        { id: "bmi", name: "Bangkok Matcha Importers", price: 415, quality: 4.8, ontime: 0.99, delivery: "same day", minOrder: "300 g", shops: 61 },
+        { id: "leaf", name: "Leaf & Co. Online", price: 360, quality: 3.9, ontime: 0.88, delivery: "2 to 3 days", minOrder: "1 kg", shops: 12 }
+      ]
+    },
+    cups: {
+      name: "Cups and lids", unit: "50 sets", unitAmount: 50, current: 120, currentFrom: "Wholesale store, your receipt 9 Oct",
+      use: { "*": 1 }, usesText: "One set in every drink", deliveries: 2,
+      suppliers: [
+        { id: "gps", name: "Green Pack Supply", price: 98, quality: 4.5, ontime: 0.98, delivery: "same day", minOrder: "500 sets", shops: 84 },
+        { id: "pcy", name: "Pack City", price: 92, quality: 4.0, ontime: 0.93, delivery: "next day", minOrder: "1,000 sets", shops: 47 }
+      ]
+    },
+    cocoa: {
+      name: "Cocoa powder", unit: "500 g", unitAmount: 500, current: 260, currentFrom: "Wholesale store",
+      use: { cocoa: 15 }, usesText: "15 g in every cocoa", deliveries: 2,
+      suppliers: [
+        { id: "ecg", name: "Eastern Cacao Growers", price: 221, quality: 4.7, ontime: 0.95, delivery: "next day", minOrder: "1 kg", shops: 22 }
+      ]
+    },
+    milk: { name: "Fresh milk", locked: true }
+  };
+  const supplierOf = c => SUPPLIES[c.supplyIng].suppliers.find(x => x.id === c.supplierId) || SUPPLIES[c.supplyIng].suppliers[0];
+  const SHOCKS = { milk: "Milk up 20%", rent: "Rent up 10%", scheme: "60/40 scheme ends" };
+  const RESPONSES = {
+    staff: [["all", "Every open day"], ["busy", "Only the 3 busiest days a week"], ["none", "Don't hire"]],
+    milk: [["raise", "Raise milk drinks by ฿5"], ["less", "Use 10% less milk per cup"], ["none", "Absorb it"]],
+    rent: [["raise", "Raise your two best sellers by ฿5"], ["hours", "Open 2 more hours"], ["none", "Absorb it"]],
+    scheme: [["set", "Run a come-back set on the platform"], ["cut", "Cut staff by 1 hour a day"], ["none", "Wait it out"]],
+    loan: [["six", "Borrow over 6 months"], ["twelve", "Borrow over 12 months"], ["cash", "Pay from your cash"]]
+  };
+
+  const fresh = () => ({
+    view: "notif", tour: null, card: "pricewar", option: 0, rating: 0, decision: "promo",
+    itemId: "matcha", type: "percent", pct: 0.2, cofund: false, pairId: "cocoa", setPct: 0.1, addonId: "shot",
+    priceItem: "matcha", priceDelta: 5, newPrice: 115, helperHours: 4, shock: "milk",
+    days: 7, cap: 30, response: null, result: null, scaled: false,
+    showReceipt: false, equipAdded: false, consent: false, streak: 3, taskDone: false, chatQ: null,
+    skills: { profit: false, market: false, test: false, shock: false }, lastSkill: null,
+    supplyIng: "matcha", supplierId: "ntc"
+  });
+  let state = fresh();
+  // What the owner gets better at. Each one is marked when the owner does the thing, not when they read about it.
+  const SKILLS = [["profit", "Know your true profit"], ["market", "Read the market"], ["test", "Test before you spend"], ["shock", "Plan for a shock"]];
+  const skillCount = () => SKILLS.filter(([id]) => state.skills[id]).length;
+  const skillDots = () => `<span class="dots" aria-hidden="true">${SKILLS.map(([id, name]) => `<i class="${state.skills[id] ? "on" : ""}" title="${name}"></i>`).join("")}</span>`;
+
+  const byId = id => MENU.find(m => m.id === id);
+  const addonById = id => ADDONS.find(a => a.id === id);
+  const keepPerCup = (p, c) => p * (1 - FEE) - c;
+  function baht(n, dp) {
+    const neg = dp ? n < -0.005 : n <= -0.5;
+    const v = Math.abs(n);
+    const s = dp ? v.toFixed(dp) : Math.round(v).toLocaleString("en-US");
+    return (neg ? "−" : "") + "฿" + s;
+  }
+  const signed = n => (n >= 0.5 ? "+" : "") + baht(n);
+  const pctTxt = x => Math.round(x * 100) + "%";
+  const days = n => (n === Infinity ? "no limit" : Math.round(n) + " days");
+
+  // Shop Counter, the second tool of the same app. Relative on the public page and on a local server; absolute anywhere else.
+  const HOSTED = typeof location !== "undefined" && /github\.io$|^127\.0\.0\.1$|^localhost$/.test(location.hostname);
+  const COUNTER = HOSTED ? "../counter/" : "https://oksoimcodingnow.github.io/shop-sandbox-demo/counter/";
+  const EXT = HOSTED ? "" : ` target="_blank" rel="noopener"`;
+  const toolsNav = () => `<nav class="tools" aria-label="Your tools"><span class="on" aria-current="page">Sandbox</span><a href="${COUNTER}"${EXT}>Counter</a></nav>`;
+
+  /* ---------- the month model ---------- */
+  function baseShop() {
+    return {
+      items: MENU.map(m => ({ id: m.id, name: m.name, price: m.price, cost: m.cost, milk: m.milk, store: m.store * OPEN_DAYS, grab: m.weekly * K })),
+      adj: { salesGrab: 0, ingredients: 0, cupsGrab: 0 },
+      staffHours: 5, wage: 60, extraStaff: 0, rent: 18000, electricity: 3800, water: 300, internet: 600, other: 300,
+      staffDrinks: 780, equipWear: 4167, extraWaste: 0, loanPay: 0, loanInterest: 0, ownerPay: 12000, cash: 40000, promoOrders: 0
+    };
+  }
+
+  function finish(s) {
+    let salesStore = 0, salesGrab = s.adj.salesGrab, ingredients = s.adj.ingredients, cupsStore = 0, cupsGrab = s.adj.cupsGrab;
+    s.items.forEach(it => {
+      salesStore += it.store * it.price; salesGrab += it.grab * it.price;
+      ingredients += (it.store + it.grab) * it.cost; cupsStore += it.store; cupsGrab += it.grab;
+    });
+    const sales = salesStore + salesGrab, commission = salesGrab * FEE;
+    const staff = s.staffHours * OPEN_DAYS * s.wage * (1 + SSO) + s.extraStaff;
+    const bills = s.electricity + s.water + s.internet + s.other;
+    const waste = ingredients * WASTE + s.extraWaste, refunds = salesGrab * REFUND;
+    const hidden = waste + s.staffDrinks + refunds + s.equipWear + s.loanInterest;
+    const seen = sales - commission - ingredients - staff - s.rent - bills;
+    const before = seen - hidden, truep = before - s.ownerPay;
+    const cups = cupsStore + cupsGrab;
+    const fixed = staff + s.rent + bills + s.staffDrinks + s.equipWear + s.loanInterest + s.ownerPay;
+    const varCup = (sales - commission - ingredients - waste - refunds) / cups;
+    const fixedCash = staff + s.rent + bills + s.ownerPay + s.loanPay;
+    return {
+      sales, salesStore, salesGrab, commission, ingredients, staff, rent: s.rent, bills, waste, refunds,
+      staffDrinks: s.staffDrinks, equipWear: s.equipWear, loanInterest: s.loanInterest, loanPay: s.loanPay,
+      hidden, seen, before, ownerPay: s.ownerPay, truep, cups, cupsDay: cups / OPEN_DAYS,
+      beDay: varCup > 0 ? fixed / varCup / OPEN_DAYS : Infinity,
+      cushion: s.cash / (fixedCash / 30), runway: truep < 0 ? s.cash / -truep : Infinity, cash: s.cash, promoOrders: s.promoOrders
+    };
+  }
+
+  function addStoreCups(s, cups) {
+    const tot = s.items.reduce((t, i) => t + i.store, 0);
+    s.items.forEach(it => { it.store += cups * it.store / tot; });
+  }
+  function scaleGrab(s, f) {
+    s.items.forEach(it => { it.grab *= f; });
+    s.adj.salesGrab *= f; s.adj.ingredients *= f; s.adj.cupsGrab *= f; s.promoOrders *= f;
+  }
+  function scaleStore(s, f) { s.items.forEach(it => { it.store *= f; }); }
+  function priceChange(s, ids, delta, e) {
+    s.items.forEach(it => {
+      if (!ids.includes(it.id)) return;
+      const r = (it.price + delta) / it.price;
+      it.store *= Math.pow(r, -e * 0.6); it.grab *= Math.pow(r, -e); it.price += delta;
+    });
+  }
+  function loanTerms(n) {
+    const pay = BLENDER * LOAN_RATE / (1 - Math.pow(1 + LOAN_RATE, -n));
+    return { pay, interest: pay * n - BLENDER };
+  }
+
+  /* promotion on one platform item, kept from the first version */
+  function scenario(c, e) {
+    const a = byId(c.itemId), q0 = a.weekly, base = keepPerCup(a.price, a.cost);
+    if (c.type === "percent") {
+      const share = c.cofund ? 0.5 : 1;
+      const unit = a.price * (1 - c.pct * share) * (1 - FEE) - a.cost;
+      const q = q0 * Math.pow(1 - c.pct, -e);
+      return { orders: q, kept: q * unit, unit };
+    }
+    if (c.type === "set") {
+      const b = byId(c.pairId);
+      const price = (a.price + b.price) * (1 - c.setPct);
+      const unit = price * (1 - FEE) - a.cost - b.cost;
+      const take = Math.min(0.6, 0.2 + c.setPct * 1.6);
+      const newQ = q0 * (Math.pow(1 - c.setPct, -e * 0.6) - 1);
+      return { orders: q0 + newQ, kept: q0 * (1 - take) * base + (q0 * take + newQ) * unit, unit, take };
+    }
+    const ad = addonById(c.addonId);
+    const unit = base - ad.cost;
+    const q = q0 * Math.pow(1 - ad.value / a.price, -e * 0.8);
+    return { orders: q, kept: q * unit, unit };
+  }
+  function promoWeek(c) {
+    const a = byId(c.itemId), baseUnit = keepPerCup(a.price, a.cost);
+    const base = { orders: a.weekly, kept: a.weekly * baseUnit, unit: baseUnit };
+    const likely = scenario(c, ELAST.likely);
+    const breakEven = c.type !== "set" ? (likely.unit > 0 ? a.weekly * baseUnit / likely.unit - a.weekly : Infinity) : null;
+    return { a, base, likely, breakEven };
+  }
+  function promoAdjust(c, e) {
+    const a = byId(c.itemId), q0 = a.weekly;
+    if (c.type === "percent") {
+      const share = c.cofund ? 0.5 : 1, q = q0 * Math.pow(1 - c.pct, -e);
+      return { salesGrab: (q * a.price * (1 - c.pct * share) - q0 * a.price) * K, ingredients: (q - q0) * a.cost * K, cupsGrab: (q - q0) * K, orders: q * K };
+    }
+    if (c.type === "set") {
+      const b = byId(c.pairId), price = (a.price + b.price) * (1 - c.setPct);
+      const take = Math.min(0.6, 0.2 + c.setPct * 1.6), newQ = q0 * (Math.pow(1 - c.setPct, -e * 0.6) - 1);
+      const bundles = q0 * take + newQ, singles = q0 * (1 - take);
+      const sales = singles * a.price + bundles * price, ingr = singles * a.cost + bundles * (a.cost + b.cost);
+      return { salesGrab: (sales - q0 * a.price) * K, ingredients: (ingr - q0 * a.cost) * K, cupsGrab: (singles + bundles * 2 - q0) * K, orders: (q0 + newQ) * K };
+    }
+    const ad = addonById(c.addonId), q = q0 * Math.pow(1 - ad.value / a.price, -e * 0.8);
+    return { salesGrab: (q - q0) * a.price * K, ingredients: (q * (a.cost + ad.cost) - q0 * a.cost) * K, cupsGrab: (q - q0) * K, orders: q * K };
+  }
+  function applyPromo(s, key, c) {
+    const d = promoAdjust(c, ELAST[key]);
+    s.adj.salesGrab += d.salesGrab; s.adj.ingredients += d.ingredients; s.adj.cupsGrab += d.cupsGrab; s.promoOrders += d.orders;
+  }
+
+  function applyHours(s, key) {
+    const r = { low: [3, 0.08], likely: [6, 0.15], high: [9, 0.22] }[key];
+    addStoreCups(s, r[0] * OPEN_DAYS); scaleGrab(s, 1 + r[1]);
+    s.staffHours += 2; s.electricity *= 1.08;
+  }
+  function applyStaff(s, key, hours, resp) {
+    if (resp === "none") return;
+    const cups = { low: 2, likely: 4, high: 6 }[key], lift = { low: 0.03, likely: 0.06, high: 0.09 }[key];
+    const daysWorked = resp === "busy" ? 13 : OPEN_DAYS, busyBoost = resp === "busy" ? 1.4 : 1, f = hours / 4;
+    addStoreCups(s, cups * f * daysWorked * busyBoost);
+    scaleGrab(s, 1 + lift * f * (daysWorked / OPEN_DAYS) * busyBoost);
+    s.extraStaff += hours * daysWorked * s.wage * (1 + SSO);
+  }
+  function applyItem(s, key, price) {
+    const v = { low: [1.5, 5], likely: [3, 10], high: [5, 15] }[key];
+    const pf = Math.pow(price / 115, -1.6);
+    const store = v[0] * OPEN_DAYS * pf, grab = v[1] * K * pf;
+    s.items.push({ id: "oat", name: "Oat-milk Matcha", price, cost: 48, milk: 0, store, grab });
+    const m = s.items.find(i => i.id === "matcha");
+    m.store -= store * 0.3; m.grab -= grab * 0.3;
+    s.extraWaste += (store + grab) * 48 * 0.04;
+  }
+  function applyLoan(s, key, resp) {
+    addStoreCups(s, { low: 2, likely: 4, high: 6 }[key] * OPEN_DAYS);
+    scaleGrab(s, 1 + { low: 0.03, likely: 0.05, high: 0.08 }[key]);
+    s.equipWear += BLENDER / 60;
+    if (resp === "cash") { s.cash -= BLENDER; return; }
+    const t = loanTerms(resp === "twelve" ? 12 : 6);
+    s.loanPay = t.pay; s.loanInterest = t.interest / (resp === "twelve" ? 12 : 6);
+  }
+  const MILK_IDS = MENU.filter(m => m.milk > 0).map(m => m.id);
+  function applyShock(s, key, kind, resp, c) {
+    const e = ELAST[key];
+    if (kind === "milk") {
+      s.items.forEach(it => { it.cost *= 1 + 0.2 * (it.milk || 0); });
+      if (resp === "raise") priceChange(s, MILK_IDS, 5, e);
+      if (resp === "less") s.items.forEach(it => {
+        if (!it.milk) return;
+        it.cost -= it.cost / (1 + 0.2 * it.milk) * it.milk * 1.2 * 0.1;
+        it.store *= 0.97; it.grab *= 0.97;
+      });
+    } else if (kind === "rent") {
+      s.rent *= 1.1;
+      if (resp === "raise") priceChange(s, ["matcha", "coco"], 5, e);
+      if (resp === "hours") applyHours(s, key);
+    } else {
+      if (resp === "set") applyPromo(s, key, { ...c, type: "set", itemId: "matcha", pairId: "cocoa", setPct: 0.1 });
+      if (resp === "cut") s.staffHours -= 1;
+      const r = { low: [0.85, 1.0], likely: [0.70, 0.95], high: [0.55, 0.90] }[key];
+      scaleGrab(s, r[0]); scaleStore(s, r[1]);
+    }
+  }
+
+  function applySupply(s, key, c) {
+    const ing = SUPPLIES[c.supplyIng], sup = supplierOf(c);
+    const savePerUnit = (ing.current - sup.price) / ing.unitAmount;
+    s.items.forEach(it => {
+      const use = ing.use[it.id] ?? ing.use["*"] ?? 0;
+      if (!use) return;
+      it.cost -= use * savePerUnit;
+      // Low case: a weaker supplier costs some customers.
+      if (key === "low") { const f = sup.quality < 4.2 ? 0.95 : 0.99; it.store *= f; it.grab *= f; }
+    });
+    s.other += ing.deliveries * DELIVERY_FEE;
+  }
+
+  function defaultResponse(c) {
+    if (c.decision === "staff") return "all";
+    if (c.decision === "loan") return "six";
+    if (c.decision === "shock") return "none";
+    return null;
+  }
+  function build(c, key, resp) {
+    const s = baseShop(), r = resp || defaultResponse(c);
+    switch (c.decision) {
+      case "promo": applyPromo(s, key, c); break;
+      case "price": priceChange(s, [c.priceItem], c.priceDelta, ELAST[key]); break;
+      case "item": applyItem(s, key, c.newPrice); break;
+      case "hours": applyHours(s, key); break;
+      case "staff": applyStaff(s, key, c.helperHours, r); break;
+      case "shock": applyShock(s, key, c.shock, r, c); break;
+      case "loan": applyLoan(s, key, r); break;
+      case "supply": applySupply(s, key, c); break;
+    }
+    return finish(s);
+  }
+  function outcome(c, resp) {
+    const o = { base: finish(baseShop()) };
+    KEYS.forEach(k => { o[k] = build(c, k, resp); });
+    const ts = KEYS.map(k => o[k].truep);
+    o.minT = Math.min(...ts); o.maxT = Math.max(...ts); o.delta = o.likely.truep - o.base.truep;
+    return o;
+  }
+  function responsesFor(c) { return c.decision === "shock" ? RESPONSES[c.shock] : RESPONSES[c.decision] || []; }
+
+  function describePromo(c) {
+    const a = byId(c.itemId);
+    if (c.type === "percent") return pctTxt(c.pct) + " off " + a.name + (c.cofund ? ", co-funded" : "");
+    if (c.type === "set") return a.name + " + " + byId(c.pairId).name + " set, " + pctTxt(c.setPct) + " off";
+    return "Free " + addonById(c.addonId).name.toLowerCase() + " with " + a.name;
+  }
+  function describe(c) {
+    switch (c.decision) {
+      case "promo": return describePromo(c);
+      case "price": { const a = byId(c.priceItem); return a.name + " " + (c.priceDelta > 0 ? "+" : "−") + "฿" + Math.abs(c.priceDelta) + " (to ฿" + (a.price + c.priceDelta) + ")"; }
+      case "item": return "Add oat-milk matcha at ฿" + c.newPrice;
+      case "hours": return "Open until 20:00, 2 more hours";
+      case "staff": return "Evening help, " + c.helperHours + " hours a day";
+      case "shock": return SHOCKS[c.shock];
+      case "loan": return "Second blender, " + baht(BLENDER);
+      case "supply": return SUPPLIES[c.supplyIng].name + " from " + supplierOf(c).name;
+    }
+  }
+  function sameCfg(x, y) {
+    if (x.type !== y.type || x.itemId !== y.itemId) return false;
+    if (x.type === "percent") return x.pct === y.pct && x.cofund === y.cofund;
+    if (x.type === "set") return x.pairId === y.pairId && x.setPct === y.setPct;
+    return x.addonId === y.addonId;
+  }
+  function promoSuggestion(c) {
+    const cur = scenario(c, ELAST.likely).kept;
+    let best = null, bestK = -Infinity;
+    MENU.filter(m => m.id !== c.itemId).forEach(b => {
+      const x = { ...c, type: "set", pairId: b.id, setPct: 0.1 };
+      const k = scenario(x, ELAST.likely).kept;
+      if (!sameCfg(x, c) && k > bestK) { bestK = k; best = x; }
+    });
+    ADDONS.forEach(ad => {
+      const x = { ...c, type: "addon", addonId: ad.id };
+      const k = scenario(x, ELAST.likely).kept;
+      if (!sameCfg(x, c) && k > bestK) { bestK = k; best = x; }
+    });
+    return best && bestK > cur + 15 ? { cfg: best, gain: (bestK - cur) * K } : null;
+  }
+  function seeded(c) {
+    const s = [c.decision, c.itemId, c.type, c.pct, c.cofund, c.pairId, c.setPct, c.addonId, c.priceItem, c.priceDelta, c.newPrice, c.days, c.cap, c.supplyIng, c.supplierId].join("|");
+    let h = 5381;
+    for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+    return (h % 1000) / 1000;
+  }
+
+  /* ---------- coach cards: presets for the model above ---------- */
+  const BASE_CFG = {
+    decision: "promo", itemId: "matcha", type: "percent", pct: 0.2, cofund: false, pairId: "cocoa", setPct: 0.1, addonId: "shot",
+    priceItem: "matcha", priceDelta: 5, newPrice: 115, helperHours: 4, shock: "milk", supplyIng: "matcha", supplierId: "ntc"
+  };
+  const P = o => ({ ...BASE_CFG, ...o });
+  const CARDS = {
+    pricewar: {
+      tag: "Growth", title: "Big brands near you: 35% off drinks", ask: "Should you match them? Compare your options.",
+      options: [
+        { label: "Match them: 35% off matcha latte", short: "Matching them", cfg: P({ type: "percent", pct: 0.35 }) },
+        { label: "20% off matcha latte", short: "20% off", cfg: P({ type: "percent", pct: 0.2 }) },
+        { label: "Matcha latte + cocoa set, 10% off", short: "A matcha + cocoa set", cfg: P({ type: "set", pairId: "cocoa", setPct: 0.1 }) },
+        { label: "Free extra matcha shot", short: "A free extra shot", cfg: P({ type: "addon", addonId: "shot" }) }
+      ]
+    },
+    supplier: { tag: "Cost", title: "Your matcha costs less from verified suppliers", ask: "Compare suppliers on price, quality and delivery.", supply: true },
+    milk: { tag: "Resilience", title: "Fresh milk is up 20% at wholesalers", ask: "Pick your answer before it hits your month.", plan: true, cfg: P({ decision: "shock", shock: "milk" }) },
+    scheme: { tag: "Resilience", title: "The 60/40 scheme ends on 30 Nov", ask: "Sales fall when the co-payment stops. Plan for it now.", plan: true, cfg: P({ decision: "shock", shock: "scheme" }) },
+    price: {
+      tag: "Growth", title: "Change the price of matcha latte", ask: "A small rise or a cut: see what each does to your month.", more: true,
+      options: [5, 10, -10].map(d => ({ label: `${d > 0 ? "Raise" : "Cut"} it by ฿${Math.abs(d)}, to ฿${100 + d}`, cfg: P({ decision: "price", priceDelta: d }) }))
+    },
+    item: {
+      tag: "Growth", title: "Add oat-milk matcha (312 searches nearby)", ask: "New demand without a discount. Which price works best?", more: true,
+      options: [105, 115, 125].map(p => ({ label: `Sell it at ฿${p}`, cfg: P({ decision: "item", newPrice: p }) }))
+    },
+    hours: { tag: "Growth", title: "Open 2 more hours, until 20:00", ask: "Do evening customers pay for the extra staff and power?", more: true, options: [{ label: "Open until 20:00 on open days", cfg: P({ decision: "hours" }) }] },
+    staff: { tag: "Growth", title: "Hire evening help, 4 hours a day", ask: "Help costs wages. Does it bring in enough cups?", more: true, plan: true, cfg: P({ decision: "staff" }) },
+    loan: { tag: "Growth", title: "Buy a second blender, ฿14,000", ask: "Borrow, or pay from your cash? Check it pays back first.", more: true, plan: true, cfg: P({ decision: "loan" }) },
+    rent: { tag: "Resilience", title: "Your rent goes up 10% at renewal", ask: "Pick your answer before the new lease starts.", more: true, plan: true, cfg: P({ decision: "shock", shock: "rent" }) }
+  };
+  const MAIN_CARDS = ["pricewar", "supplier", "milk", "scheme"];
+
+  function optionsOf(id) {
+    const card = CARDS[id];
+    if (card.supply) {
+      const ing = SUPPLIES[state.supplyIng];
+      return ing.suppliers.map(sp => ({
+        label: sp.name, short: sp.name,
+        sub: `${baht(sp.price)} per ${ing.unit} · ${pctTxt(1 - sp.price / ing.current)} cheaper · quality ${sp.quality.toFixed(1)} of 5 · on time ${pctTxt(sp.ontime)} · ${sp.delivery}`,
+        cfg: P({ decision: "supply", supplyIng: state.supplyIng, supplierId: sp.id })
+      }));
+    }
+    if (card.plan) {
+      const key = card.cfg.decision === "shock" ? card.cfg.shock : card.cfg.decision;
+      return RESPONSES[key].map(([rid, label]) => ({ label, short: label, cfg: card.cfg, resp: rid }));
+    }
+    return card.options;
+  }
+  const evalOpt = o => outcome(o.cfg, o.resp);
+  // The coach's pick: the best result even if customers react badly (highest low case),
+  // among options that keep at least 3 weeks of fixed costs in cash.
+  const MIN_CUSHION = 21;
+  function pickOf(opts) {
+    const evals = opts.map(evalOpt);
+    const safe = evals.map(r => r.likely.cushion >= MIN_CUSHION || r.likely.cushion >= r.base.cushion);
+    const pool = safe.some(Boolean) ? safe : safe.map(() => true);
+    let best = 0, bestV = -Infinity;
+    evals.forEach((r, i) => { if (pool[i] && r.minT > bestV) { bestV = r.minT; best = i; } });
+    return best;
+  }
+  const isPlan = id => !!CARDS[id].plan;
+  const selected = () => optionsOf(state.card)[state.option];
+  const testCfg = () => ({ ...selected().cfg, days: state.days, cap: state.cap });
+
+  /* ---------- screens ---------- */
+  function screenNotif() {
+    return `
+      <div class="lock">
+        <div class="lock-time">16:42</div>
+        <div class="lock-date">Sunday 11 October</div>
+        <button class="notif" data-act="open" data-v="pricewar">
+          <span class="app">Shop coach · now</span>
+          <b>Two big brands near you started 30 to 40% off drinks.</b>
+          <span>Before you match them, see what it would do to your month.</span>
+        </button>
+        <button class="notif" data-act="open" data-v="milk">
+          <span class="app">Shop coach · 2 h ago</span>
+          <b>Fresh milk is up 20% at wholesalers this week.</b>
+          <span>Four of your drinks use milk. Plan your answer in two minutes.</span>
+        </button>
+      </div>
+      <span class="muted">The coach speaks up when a decision is due, so a busy owner never has to dig through reports.</span>`;
+  }
+
+  function cardLine(id) {
+    const opts = optionsOf(id), pick = opts[pickOf(opts)], o = evalOpt(pick);
+    const nw = s => `<span style="white-space:nowrap">${s}</span>`;
+    if (!isPlan(id)) {
+      const lead = id === "pricewar" ? "Don't match them. " : "";
+      return { text: `${lead}Coach's pick: ${id === "supplier" ? pick.short : pick.short.toLowerCase()}.`, num: o.delta };
+    }
+    const none = opts.find(x => x.resp === "none");
+    const noneD = none ? evalOpt(none).delta : null;
+    return { text: `Coach's plan: ${pick.short.toLowerCase()}${noneD !== null ? `, instead of ${nw(signed(noneD))} if you do nothing` : ""}.`, num: o.delta };
+  }
+
+  function screenToday() {
+    const m = finish(baseShop());
+    const cards = MAIN_CARDS.map(id => {
+      const c = CARDS[id], l = cardLine(id);
+      return `<button class="ccard" data-act="card" data-v="${id}">
+        <div class="top"><span class="tagchip ${c.tag.toLowerCase()}">${c.tag}</span><span class="num ${l.num >= 0 ? "gain-t" : "loss-t"}">${signed(l.num)} a month</span></div>
+        <b>${c.title}</b>
+        <span class="adv">${l.text}</span>
+      </button>`;
+    }).join("");
+    const more = Object.entries(CARDS).filter(([, c]) => c.more)
+      .map(([id, c]) => `<button class="more-row" data-act="card" data-v="${id}"><span>${c.title}</span><span>›</span></button>`).join("");
+    return `
+      ${toolsNav()}
+      <div class="big-number">
+        <span class="k">This month the shop really keeps</span>
+        <span class="v">${baht(m.truep)}</span>
+        <span class="k">You see ${baht(m.seen)}. The rest goes on hidden costs and a fair wage for your own work.</span>
+        <button class="linkbtn" data-act="month">See where the money goes ›</button>
+      </div>
+      <div class="skills-row"><span>Skills practised</span>${skillDots()}<b>${skillCount()} of ${SKILLS.length}</b></div>
+      <div class="section"><div class="label">Coach · today</div><div class="cards">${cards}</div></div>
+      <details class="box more"><summary>More ideas to rehearse</summary><div class="more-list">${more}</div></details>`;
+  }
+
+  function screenMonth() {
+    const m = finish(baseShop());
+    const checks = [["Sales and fees", "grab"], ["Ingredient costs", "you"], ["Rent", "you"], ["Staff", "you"], ["Bills", "you"], ["Your own pay", "you"], ["Equipment value", state.equipAdded ? "you" : "est"]];
+    const done = checks.filter(c => c[1] !== "est").length;
+    const hidden = [["Waste and spoilage", m.waste, "est"], ["Staff and tasting drinks", m.staffDrinks, "est"], ["Refunds and cancellations", m.refunds, "grab"], ["Equipment wearing out", m.equipWear, state.equipAdded ? "you" : "est"]]
+      .map(([n, v, t]) => `<div><span>${n}</span>${tag(t)}<span class="num">${baht(v)}</span></div>`).join("");
+    const bench = [["Rent", m.rent / m.sales, "12–20%"], ["Ingredients and packaging", m.ingredients / m.sales, "28–36%"], ["Staff, including your own pay", (m.staff + m.ownerPay) / m.sales, "18–28%"]]
+      .map(([n, v, r]) => `<div class="bench-row"><span>${n}</span><span class="num">${pctTxt(v)}</span><span class="muted">similar ${r}</span></div>`).join("");
+    return `
+      <div class="section"><div class="label">This month · sample shop</div>
+        <div class="headline">You see <span class="num">${baht(m.seen)}</span>. The shop really makes <span class="num ${m.truep >= 0 ? "gain-t" : "loss-t"}">${baht(m.truep)}</span>.</div></div>
+      ${waterfall(m)}
+      <a class="linkbtn" href="${COUNTER}"${EXT}>In-shop sales are counted by Shop Counter ›</a>
+      <details class="box"><summary>What's in the hidden costs</summary><div class="hidden-list">${hidden}</div>
+        ${state.equipAdded ? "" : `<div style="padding-top:8px"><button class="btn btn-ghost btn-small" data-act="equip">Add your equipment value by voice</button></div>`}</details>
+      <div class="reveal">
+        <div class="stat"><span class="v">${Math.ceil(m.beDay)}</span><span class="k">cups a day to cover everything, your own pay included. You sell ${Math.round(m.cupsDay)}.</span></div>
+        <div class="stat"><span class="v">${days(m.cushion)}</span><span class="k">your ${baht(m.cash)} of cash would cover fixed costs if sales stopped.</span></div>
+      </div>
+      ${costCard()}
+      <div class="complete">
+        <div class="complete-top"><b>Your picture is ${pctTxt(done / checks.length)} complete</b><span class="src">${done} of ${checks.length}</span></div>
+        <div class="meter"><span style="width:${(done / checks.length * 100).toFixed(0)}%"></span></div>
+        <div class="check-list">${checks.map(([n, t]) => `<div><span>${n}</span>${tag(t)}</div>`).join("")}</div>
+      </div>
+      <div class="section"><h2>Shops like yours</h2><div class="bench">${bench}</div>
+        <span class="src">14 similar drink shops within 3 km, pooled and anonymous · sample data</span></div>
+      <div class="vis"><div class="label">How the platform works for you</div>
+        <div class="vis-score"><span class="num">62</span><span class="muted">of 100 · your visibility this week</span></div>
+        <ol><li>Be offline less: 9% of your opening hours, aim for under 5%.</li><li>Add photos to the 2 drinks that have none.</li><li>Keep prep time under 8 minutes at the evening peak.</li></ol>
+        <span class="src">Sample data</span></div>`;
+  }
+
+  function screenAsk() {
+    return `<div class="section"><h2>Ask the coach</h2><span class="muted">Tap a question. Every answer uses the shop's own numbers.</span></div>${chatCard(finish(baseShop()))}`;
+  }
+
+  /* One sentence for the owner who reads nothing else. */
+  const inShort = t => `<div class="inshort"><span class="label">In short</span>${t}</div>`;
+
+  function progress(stage) {
+    const steps = isPlan(state.card) ? ["Compare", "Plan saved"] : ["Compare", "Try small", "Result"];
+    return `<div class="progress">${steps.map((s, i) => i === stage ? `<b>${s}</b>` : `<span>${s}</span>`).join("<span>·</span>")}</div>`;
+  }
+
+  /* ---------- what customers nearby pay per order: bands only, pooled over similar shops, sample data ---------- */
+  const ORDER_BANDS = [["Under ฿100", 0.44], ["฿100–139", 0.23], ["฿140–179", 0.07], ["฿180–249", 0.17], ["฿250+", 0.09]];
+  const GAP_BAND = 2, PEER_SHOPS = 14, GAP_SHOPS = 3;
+  function customersCard() {
+    const set = (byId("matcha").price + byId("cocoa").price) * (1 - 0.1);
+    const prices = MENU.map(m => m.price), top = Math.max(...ORDER_BANDS.map(b => b[1]));
+    const above = ORDER_BANDS.slice(GAP_BAND + 1).reduce((t, b) => t + b[1], 0);
+    const bars = ORDER_BANDS.map(([label, share], i) => `<div class="band${i === GAP_BAND ? " gap" : ""}"><span class="pct num">${pctTxt(share)}</span><span class="bar" style="height:${Math.round(share / top * 24) + 4}px"></span><span class="lab">${label}</span></div>`).join("");
+    return `<div class="customers"><div class="chead"><span class="label">Your customers</span><span class="src">per order, nearby</span></div>
+      <div class="bands">${bars}</div>
+      <div class="gapnote"><b>The gap: ฿140 to ฿179.</b> Only ${GAP_SHOPS} of ${PEER_SHOPS} shops offer anything there. A matcha + cocoa set at ${baht(set)} fits.</div>
+      <details><summary>More about your customers</summary><div class="cfacts"><span>People do pay more: ${pctTxt(above)} of orders nearby are ฿180 or more</span><span>Almost all your orders are one drink at ${baht(Math.min(...prices))} to ${baht(Math.max(...prices))}</span><span>38% of your customers order again within 30 days; at similar shops, 41%</span><span>Your busiest hours: 15:00 to 18:00</span></div></details>
+      <span class="src">${PEER_SHOPS} similar shops, pooled · sample data</span></div>`;
+  }
+
+  function screenCompare() {
+    const card = CARDS[state.card], opts = optionsOf(state.card), pick = pickOf(opts);
+    const base = finish(baseShop());
+    const rows = opts.map((o, i) => {
+      const r = evalOpt(o), lo = r.minT - r.base.truep, hi = r.maxT - r.base.truep;
+      return `<button class="opt" data-act="opt" data-v="${i}" aria-pressed="${state.option === i}">
+        <span class="l"><b>${o.label}</b>${o.sub ? `<span>${o.sub}</span>` : ""}</span>
+        <span class="r"><span class="num ${r.delta >= 0 ? "gain-t" : "loss-t"}">${signed(r.delta)}</span><small>${Math.abs(hi - lo) < 1 ? "a month" : `${signed(lo)} to ${signed(hi)}`}</small></span>
+        ${i === pick ? `<span class="pick">Coach's pick: best even in a bad week, keeps 3 weeks of cash</span>` : ""}
+      </button>`;
+    }).join("");
+    const chips = card.supply ? `<div class="chips">${Object.entries(SUPPLIES).map(([id, g]) => `<button class="chip" data-act="sing" data-v="${id}" aria-pressed="${id === state.supplyIng}" ${g.locked ? "disabled" : ""}>${g.name}${g.locked ? " · later" : ""}</button>`).join("")}</div>
+      <span class="src">Quality and on-time rates pooled from shops like yours · fresh milk waits for a cold chain · sample data</span>` : "";
+    const sel = evalOpt(opts[state.option]);
+    const peers = (PEERS[card.supply ? "supply" : opts[state.option].cfg.decision] || []).map(([n, v, good]) => `<div class="peer-row"><span>${n}</span><b class="num ${good ? "gain-t" : "loss-t"}">${v}</b></div>`).join("");
+    const pk = opts[pick], pkName = pk.short || pk.label, none = opts.find(x => x.resp === "none");
+    const short = `${state.card === "pricewar" ? "Don't match them. " : ""}Coach's ${isPlan(state.card) ? "plan" : "pick"}: ${card.supply ? pkName : pkName.charAt(0).toLowerCase() + pkName.slice(1)}, ${signed(evalOpt(pk).delta)} a month${none && none !== pk ? `, instead of ${signed(evalOpt(none).delta)} if you do nothing` : ""}.`;
+    return `
+      ${progress(0)}
+      <div class="section"><span class="tagchip ${card.tag.toLowerCase()}">${card.tag}</span><h2>${card.title}</h2>${inShort(short)}${chips}</div>
+      <div class="baseline">You keep <b class="num">${baht(base.truep)}</b> a month now. Options show the change.</div>
+      ${["pricewar", "price"].includes(state.card) ? customersCard() : ""}
+      <div class="options">${rows}</div>
+      <details class="box"><summary>Why? The numbers behind “${opts[state.option].short || opts[state.option].label}”</summary>
+        <dl class="facts" style="margin-top:8px">${compareFacts(sel)}</dl>
+        ${peers ? `<div class="peer" style="margin-top:8px"><div class="label">Shops like yours</div>${peers}<span class="src">Pooled and anonymous · sample data</span></div>` : ""}
+      </details>`;
+  }
+
+  function capFactor(c, o, d) {
+    if (c.decision !== "promo") return 1;
+    const promoOrders = o.likely.promoOrders / 30 * d;
+    return promoOrders > c.cap ? c.cap / promoOrders : 1;
+  }
+
+  function screenTry() {
+    const c = testCfg(), o = outcome(c), f = capFactor(c, o, c.days);
+    const per = KEYS.map(k => (o[k].truep - o.base.truep) / 30 * c.days * f);
+    const worst = Math.min(...per), best = Math.max(...per);
+    const how = { promo: "Run it on the platform", price: "Change the price on the platform only", item: "List it on the platform and at your counter", hours: "Stay open until 20:00", supply: "Order a trial batch through the platform and use it" }[c.decision];
+    const seg = (act, vals, cur) => `<div class="seg">` + vals.map(([v, t]) => `<button data-act="${act}" data-v="${v}" aria-pressed="${v === cur}">${t}</button>`).join("") + `</div>`;
+    return `
+      ${progress(1)}
+      ${inShort(`Test it for ${c.days} days${c.decision === "promo" ? `, stop after ${state.cap} orders` : ""}. Worst case ${signed(worst)}, best case ${signed(best)}.`)}
+      <div class="section"><h2>Try it small first</h2>
+        <span class="muted">${how} for a few days${c.decision === "promo" ? ", with a cap on orders" : ""}, so a wrong guess can only cost a little.</span>
+        <b>${selected().label}</b></div>
+      <div class="section"><div class="label">How long</div>${seg("days", [[3, "3 days"], [7, "7 days"], [14, "14 days"]], state.days)}</div>
+      ${c.decision === "promo" ? `<div class="section"><div class="label">Stop after</div>${seg("cap", [[20, "20 orders"], [30, "30 orders"], [50, "50 orders"]], state.cap)}</div>` : ""}
+      <div class="risk">
+        <div class="stat ${worst < 0 ? "loss" : "gain"}"><span class="v">${signed(worst)}</span><span class="k">worst case against a normal ${c.days} days</span></div>
+        <div class="stat ${best < 0 ? "loss" : "gain"}"><span class="v">${signed(best)}</span><span class="k">best case</span></div>
+      </div>`;
+  }
+
+  function runTest() {
+    const c = testCfg(), o = outcome(c), f = capFactor(c, o, c.days);
+    const per = KEYS.map(k => (o[k].truep - o.base.truep) / 30 * c.days * f);
+    const actual = (o.likely.truep - o.base.truep) / 30 * c.days * f * (0.82 + 0.3 * seeded(c));
+    state.result = { kind: "test", cfg: c, diff: actual, lo: Math.min(...per), hi: Math.max(...per), base: o.base.truep / 30 * c.days, o };
+    state.skills.test = true; state.lastSkill = "test";
+    finishTask(c);
+  }
+  function savePlan() {
+    const opt = selected(), c = { ...opt.cfg }, o = outcome(c, opt.resp);
+    const nothing = c.decision === "shock" ? outcome(c, "none") : null;
+    state.result = { kind: "plan", cfg: c, response: opt.resp, label: opt.label, o, nothing };
+    if (c.decision === "shock") state.skills.shock = true;
+    state.lastSkill = c.decision === "shock" ? "shock" : "profit";
+    finishTask(c);
+  }
+  function finishTask(c) {
+    const cut = (c.decision === "promo" && c.type === "percent") || (c.decision === "price" && c.priceDelta < 0);
+    if (!cut && !state.taskDone) { state.taskDone = true; state.streak += 1; }
+  }
+
+  function screenResult() {
+    const r = state.result;
+    if (!r) return `<div class="note">Pick an option first.</div>`;
+    const c = r.cfg;
+    let top, line;
+    if (r.kind === "test") {
+      top = r.diff >= 0 ? `You kept <span class="num gain-t">${baht(r.diff)}</span> more than a normal ${c.days} days` : `You kept <span class="num loss-t">${baht(-r.diff)}</span> less than a normal ${c.days} days`;
+      line = `Forecast ${signed(r.lo)} to ${signed(r.hi)} · actual ${signed(r.diff)} · simulated result`;
+    } else {
+      top = `Plan saved: ${r.label.toLowerCase()}`;
+      line = `Likely true profit ${baht(r.o.likely.truep)} a month${r.nothing && r.response !== "none" ? `, against ${baht(r.nothing.likely.truep)} if you do nothing` : ""}. The coach reminds you when it happens.`;
+    }
+    const rate = c.decision === "supply" && r.kind === "test" ? `
+      <div class="section"><div class="label">Rate this batch</div>
+        <div class="stars">${[1, 2, 3, 4, 5].map(n => `<button data-act="rate" data-v="${n}" aria-pressed="${state.rating >= n}" aria-label="${n} stars">★</button>`).join("")}</div>
+        <span class="muted">${state.rating ? "Thanks. Your rating joins the pooled quality score other shops see." : "Your rating joins the pooled quality score other shops see."}</span></div>` : "";
+    const loanBox = c.decision === "loan" && r.kind === "plan" && r.response !== "cash" ? `
+      <div class="consent"><div class="label">Optional</div>
+        <span>You may qualify for a cash loan. Example terms: up to 2.75% a month.</span>
+        <label class="check"><input type="checkbox" id="consent" ${state.consent ? "checked" : ""}><span>Share my sandbox numbers with the lending team so they can check. I can withdraw this any time.</span></label>
+        <span class="muted">${state.consent ? "Demo only: nothing is sent." : "Nothing is shared unless you tick this."}</span></div>` : "";
+    const short = r.kind !== "test" ? "Your plan is saved. Nothing to do now: the coach reminds you when it happens."
+      : r.diff >= 0 ? `It worked: ${signed(r.diff)} in ${c.days} days. Keep it.`
+      : `It lost ${baht(-r.diff)} in ${c.days} days. Stop it: the small test kept the loss small.`;
+    return `
+      ${progress(isPlan(state.card) ? 1 : 2)}
+      ${inShort(short)}
+      <div class="section"><div class="headline">${top}</div><span class="src">${line}</span></div>
+      <div class="lesson"><div class="label">What this taught you</div><p>${lesson(r)}</p></div>
+      ${rate}${loanBox}
+      <div class="skill"><span class="label">Skill practised</span><b>${(SKILLS.find(s => s[0] === state.lastSkill) || SKILLS[0])[1]}</b><span class="n">${skillDots()}${skillCount()} of ${SKILLS.length}</span></div>
+      <div class="note">Learning streak: <b>${state.streak} days</b>. One rehearsal a week keeps it going.</div>`;
+  }
+
+  /* ---------- helpers kept from the earlier version ---------- */
+  function costCard() {
+    const lines = RECEIPT.map(([n, p]) => `<div><span>${n}</span><span>${baht(p)}</span></div>`).join("");
+    const parts = MATCHA_COST.map(([n, p]) => `${n} ${baht(p, 1)}`).join(" · ");
+    const open = state.showReceipt ? `
+      <div class="receipt">${lines}<div><span>Wholesale store · 9 Oct</span><span>${baht(RECEIPT.reduce((t, r) => t + r[1], 0))}</span></div></div>
+      <span class="muted">Read 5 items. A matcha latte now costs you <b class="num">${baht(38)}</b> a cup: ${parts}.</span>
+      <div class="voice">Or say it: <b>“นมสดขึ้นเป็น 52 บาท”</b> (fresh milk is now ฿52), and the coach updates every drink that uses milk.</div>
+      <span class="src">Demo: the photo reading and voice input are simulated</span>` : "";
+    return `
+      <div class="costcard">
+        <div class="costcard-top">
+          <div><b>Ingredient costs</b><div class="muted">From a receipt photo, 9 Oct</div></div>
+          <button class="btn btn-ghost btn-small" data-act="receipt" aria-expanded="${state.showReceipt}">${state.showReceipt ? "Hide" : "Update costs"}</button>
+        </div>${open}
+        <div><button class="btn btn-ghost btn-small" data-act="card" data-v="supplier">Compare matcha suppliers ›</button></div>
+      </div>`;
+  }
+
+  function tag(kind) {
+    return { grab: `<span class="tag grab">From the platform</span>`, you: `<span class="tag you">From you</span>`, est: `<span class="tag est">Estimate</span>`, mix: `<span class="tag grab">Platform + you</span>` }[kind];
+  }
+
+  function waterfall(m) {
+    const rows = [
+      { n: "Sales", t: "mix", v: m.sales, k: "sales", note: `in-shop ${baht(m.salesStore)} · platform ${baht(m.salesGrab)}` },
+      { n: "Platform commission", t: "grab", v: m.commission, k: "cost" },
+      { n: "Ingredients and packaging", t: "you", v: m.ingredients, k: "cost", note: "from receipts" },
+      { n: "Staff", t: "you", v: m.staff, k: "cost" },
+      { n: "Rent", t: "you", v: m.rent, k: "cost" },
+      { n: "Bills and permits", t: "you", v: m.bills, k: "cost", note: "electricity bill photo" },
+      { n: "Profit you see", v: m.seen, k: "sub" },
+      { n: "Hidden costs", t: "est", v: m.hidden, k: "cost" },
+      { n: "A fair wage for you", t: "you", v: m.ownerPay, k: "cost" },
+      { n: "True profit", v: m.truep, k: "total" }
+    ];
+    let run = m.sales;
+    const S = m.sales;
+    return `<div class="wf">` + rows.map(r => {
+      let left = 0, width = 0;
+      if (r.k === "sales") { width = 100; }
+      else if (r.k === "cost") { run -= r.v; left = Math.max(0, run) / S * 100; width = r.v / S * 100; }
+      else { width = Math.max(0, r.v) / S * 100; }
+      const strong = r.k === "sub" || r.k === "total";
+      const val = r.k === "cost" ? "−" + baht(r.v) : baht(r.v);
+      return `<div class="wf-row ${strong ? "strong" : ""}">
+        <div class="wf-name"><span>${r.n}</span>${r.t ? tag(r.t) : ""}${r.note ? `<span class="src">${r.note}</span>` : ""}</div>
+        <div class="wf-track"><span class="wf-seg ${r.k}" style="left:${left.toFixed(2)}%;width:${width.toFixed(2)}%"></span></div>
+        <div class="wf-val ${r.k === "total" ? (r.v >= 0 ? "gain-t" : "loss-t") : ""}">${val}</div>
+      </div>`;
+    }).join("") + `</div>`;
+  }
+
+  const CHAT_QS = [
+    ["profit", "Why is my true profit so much lower than what I see?", "ทำไมกำไรจริงถึงน้อยกว่าที่เห็นเยอะ"],
+    ["match", "Should I match the big brands' 35% off?", "ควรลดราคา 35% ตามแบรนด์ใหญ่ไหม"],
+    ["essay", "Can you write my university essay?", "ช่วยเขียนรายงานส่งอาจารย์ให้หน่อย"]
+  ];
+  function chatCard(m) {
+    const qs = CHAT_QS.map(([id, en, th]) => `<button class="chatq" data-act="q" data-v="${id}" aria-pressed="${state.chatQ === id}"><span>${en}</span><span class="th">${th}</span></button>`).join("");
+    let convo = "";
+    const q = CHAT_QS.find(x => x[0] === state.chatQ);
+    if (q) {
+      const onTopic = (score, tool) => `<div class="trace"><span>Gate:</span><span class="ok">on-topic ${score}</span><span>→ coach → ${tool}</span><span>· simulated</span></div>`;
+      let trace, answer;
+      if (q[0] === "profit") {
+        const parts = [["equipment wearing out", m.equipWear], ["waste and spoilage", m.waste], ["staff and tasting drinks", m.staffDrinks], ["refunds", m.refunds]].sort((a, b) => b[1] - a[1]);
+        trace = onTopic("0.93", "shop calculator");
+        answer = `<span>You see ${baht(m.seen)}, but two things aren't in that number.</span>
+          <span>Hidden costs take <b class="num">${baht(m.hidden)}</b> a month. The biggest is ${parts[0][0]}, ${baht(parts[0][1])}: money you'll need when the blender or fridge gives out.</span>
+          <span>Then there's a fair wage for your own work, <b class="num">${baht(m.ownerPay)}</b>. What's left, <b class="num">${baht(m.truep)}</b>, is what the shop really makes.</span>`;
+      } else if (q[0] === "match") {
+        const a = byId("matcha"), now = keepPerCup(a.price, a.cost), at = a.price * 0.65 * (1 - FEE) - a.cost;
+        const setDelta = evalOpt(CARDS.pricewar.options[2]).delta;
+        trace = onTopic("0.95", "shop calculator");
+        answer = `<span>At 35% off, a platform matcha latte leaves you <b class="num">${baht(at, 1)}</b> instead of <b class="num">${baht(now, 1)}</b> after commission and ingredients. You'd need about ${Math.round(now / at)} times the orders just to stand still.</span>
+          <span>Big brands can absorb that; you shouldn't have to. A matcha + cocoa set at 10% off raises what each order is worth instead: about <b class="num">${signed(setDelta)}</b> a month on your numbers.</span>
+          <div><button class="btn btn-main btn-small" data-act="ask-set">Compare it with matching them</button></div>`;
+      } else {
+        trace = `<div class="trace"><span>Gate:</span><span class="no">off-topic 0.12</span><span>→ stopped before the main model · cost about ฿0 · simulated</span></div>`;
+        answer = `<span>ขออภัย ผู้ช่วยนี้ช่วยได้เฉพาะเรื่องร้านของคุณ เช่น ต้นทุน ราคา โปรโมชัน และแผนรับมือ</span>
+          <span>Sorry, I can only help with your shop: costs, prices, promotions and plans. Try asking why sales dropped last Tuesday.</span>`;
+      }
+      convo = `<div class="convo"><div class="bubble me">${q[1]}</div>${trace}<div class="bubble coach">${answer}</div></div>`;
+    }
+    return `<div class="chat"><div class="chat-top"><b>Questions</b><span class="src">Scripted demo</span></div><div class="chat-qs">${qs}</div>${convo}</div>`;
+  }
+
+  const PEERS = {
+    promo: [["Ran a set menu", "+12% kept", 1], ["Added a free extra", "+5% kept", 1], ["Ran 30% off or more", "−9% kept", 0]],
+    price: [["Raised a best seller by ฿5", "+4% kept", 1], ["Cups lost after a ฿5 rise", "−3%", 0]],
+    item: [["Added a plant-milk option", "+6% sales in 3 months", 1], ["Waste on the new item", "about 8%", 0]],
+    hours: [["Open until 20:00", "evening is 18% of sales", 1], ["Closed again within 2 months", "1 in 4 shops", 0]],
+    staff: [["One helper at the peak", "order delays 4% vs 8%", 1], ["Helper on quiet days", "rarely pays", 0]],
+    shock: [["Raised milk drinks ฿5 when milk rose", "kept margin", 1], ["Cups lost after the rise", "under 3%", 0]],
+    loan: [["Added a second blender", "peak wait −30%", 1], ["Paid it back within", "about 5 months", 1]],
+    supply: [["Switched matcha supplier", "−9% cost per cup", 1], ["Went back to the old supplier", "1 in 6 shops", 0]]
+  };
+
+  function compareFacts(o) {
+    const b = o.base, a = o.likely;
+    const lines = [["Sales", "sales"], ["Platform commission", "commission"], ["Ingredients and packaging", "ingredients"], ["Staff", "staff"], ["Rent", "rent"], ["Bills and permits", "bills"], ["Hidden costs", "hidden"], ["Loan repayment (cash)", "loanPay"]];
+    let html = lines.filter(([, k]) => Math.abs(a[k] - b[k]) >= 1).map(([n, k]) => `<div><dt>${n}</dt><dd>${baht(b[k])} → ${baht(a[k])}</dd></div>`).join("");
+    html += `<div class="strong"><dt>True profit a month</dt><dd>${baht(b.truep)} → ${baht(a.truep)}</dd></div>`;
+    html += `<div><dt>Cups a day to cover everything</dt><dd>${Math.ceil(b.beDay)} → ${a.beDay === Infinity ? "never" : Math.ceil(a.beDay)}</dd></div>`;
+    html += `<div><dt>Cash would cover fixed costs for</dt><dd>${days(b.cushion)} → ${days(a.cushion)}</dd></div>`;
+    return html;
+  }
+
+  function lesson(r) {
+    const c = r.cfg;
+    if (r.kind === "test") {
+      if (c.decision === "promo") {
+        const w = promoWeek(c);
+        if (c.type === "percent" && r.diff < 0) return `A ${pctTxt(c.pct)} discount left you ${baht(w.likely.unit, 1)} a cup instead of ${baht(w.base.unit, 1)}. Big brands can afford that; you can't. Add value instead of cutting price: a set or a free extra.`;
+        if (r.diff < 0) return `This one didn't pay, and the cap kept the loss to ${baht(-r.diff)}. Try a smaller discount or a different pairing.`;
+        return c.type === "percent" ? "The discount paid off because orders rose enough. Keep the cap on: a slow week can turn it into a loss." : "Adding value raised what each order is worth without a price war.";
+      }
+      if (c.decision === "price") return r.diff >= 0 ? "A small rise lost a few cups but kept more money overall. Small, regular steps protect your margin better than one big jump." : "The lower price brought more cups, but not enough to cover the thinner margin.";
+      if (c.decision === "item") return "New demand beats discounting: the oat-milk drink added profit without touching your other prices. Watch waste, since opened oat milk spoils fast.";
+      if (c.decision === "supply") {
+        const ing = SUPPLIES[c.supplyIng], sup = supplierOf(c);
+        return r.diff >= 0 ? `Buying ${ing.name.toLowerCase()} from ${sup.name} cut your cost per cup without touching your prices.` : "The saving didn't cover the delivery fees and the customers you lost. Try a supplier with a higher quality rating.";
+      }
+      return r.diff >= 0 ? "The extra hours paid for their staff and power. Check two weeks of evening orders before making it permanent." : "The evening didn't bring enough customers to pay for staff and power. Try weekends only.";
+    }
+    const l = r.o.likely, base = r.o.base;
+    if (c.decision === "shock") {
+      const saved = l.truep - r.nothing.likely.truep;
+      if (r.response === "none") return `Doing nothing costs you ${baht(base.truep - l.truep)} a month. Knowing that now is the point: you can still choose another answer.`;
+      if (saved < 0) return `This answer costs ${baht(-saved)} a month more than doing nothing: the customers you lose outweigh what you save.`;
+      return `Your plan keeps ${baht(saved)} a month more than doing nothing. Act the week it happens.`;
+    }
+    if (c.decision === "staff") return l.truep >= base.truep ? "Help pays when it covers the hours you lose customers. Track the evening orders to check it." : "Extra help costs more than the cups it brings in at these hours. Help on the busiest days, or open longer first.";
+    return r.response === "cash" ? `Paying cash saves the interest but your cash would cover fixed costs for only ${days(l.cushion)}. Keep a cushion before you spend it.` : `The blender adds more each month than the ${baht(l.loanPay)} repayment, so the loan pays for itself, and your cash cushion stays intact.`;
+  }
+
+  /* ---------- render ---------- */
+  const screen = document.getElementById("screen");
+  const bar = document.getElementById("bar");
+  const streakEl = document.getElementById("streak");
+  const hback = document.getElementById("hback");
+  const tip = document.getElementById("tourTip");
+  const VIEWS = { notif: screenNotif, today: screenToday, month: screenMonth, ask: screenAsk, compare: screenCompare, try: screenTry, result: screenResult };
+  const trail = [];   // screens behind the current one, for the back button
+
+  function render(scrollTop) {
+    if (state.view === "today" || state.view === "month") state.skills.profit = true;
+    if (state.view === "compare") state.skills.market = true;
+    screen.innerHTML = VIEWS[state.view]();
+    streakEl.textContent = "Streak " + state.streak + " days";
+    hback.hidden = state.view === "notif";
+    const ghost = (act, label) => `<button class="btn btn-ghost" data-act="${act}">${label}</button>`;
+    const main = (act, label, v) => `<button class="btn btn-main" data-act="${act}"${v ? ` data-v="${v}"` : ""}>${label}</button>`;
+    bar.innerHTML = {
+      notif: ghost("tour", "Take the tour") + main("go", "Open Shop Sandbox", "today"),
+      today: main("go", "Ask the coach", "ask"),
+      month: main("go", "Back to Today", "today"),
+      ask: main("go", "Back to Today", "today"),
+      compare: isPlan(state.card) ? main("save", "Save my plan") : main("go", "Try it small", "try"),
+      try: main("run", "Start the test"),
+      result: main("go", "Back to Today", "today")
+    }[state.view];
+    if (scrollTop) { screen.scrollTop = 0; if (window.matchMedia("(max-width: 860px)").matches) document.getElementById("app").scrollIntoView({ block: "start" }); }
+    renderTour();
+  }
+
+  function go(view) {
+    if (view === "today") { trail.length = 0; trail.push("notif"); }
+    else if (view !== state.view) trail.push(state.view);
+    state.view = view;
+    render(true);
+  }
+  function back() {
+    state.view = trail.pop() || (state.view === "today" ? "notif" : "today");
+    render(true);
+  }
+
+  function openCard(id, option) {
+    state.card = id;
+    if (CARDS[id].supply && SUPPLIES[state.supplyIng].locked) state.supplyIng = "matcha";
+    const opts = optionsOf(id);
+    state.option = option ?? pickOf(opts);
+    state.result = null; state.rating = 0; state.consent = false;
+    go("compare");
+  }
+
+  /* ---------- guided tour: each step sets up the app, then points at one thing ---------- */
+  function tourCard(id) {
+    state.card = id; state.option = pickOf(optionsOf(id));
+    state.result = null; state.rating = 0; state.consent = false;
+  }
+  const TOUR = [
+    { view: "notif", trail: [], sel: ".notif", t: "A nudge, not a report",
+      p: () => "The coach speaks up when a decision is due, such as two big brands starting a price war nearby. A busy owner never has to dig through dashboards." },
+    { view: "today", trail: ["notif"], sel: ".big-number", t: "What the shop really keeps",
+      p: () => { const m = finish(baseShop()); return `The owner sees ${baht(m.seen)}. After rent, staff, waste, worn equipment and a fair wage for their own work, the shop keeps ${baht(m.truep)}. Grab shares what it already knows; the owner adds the rest by receipt photo or voice.`; } },
+    { view: "today", trail: ["notif"], sel: ".cards", t: "The coach's cards",
+      p: () => "Each card already shows the result of the coach's best option, so the owner sees the answer before reading anything. Growth, cost and resilience in one feed." },
+    { view: "today", trail: ["notif"], sel: '.ccard[data-v="supplier"]', t: "Cheaper supplies (B2B)",
+      p: () => "Verified suppliers on the platform, compared on landed price, quality and on-time rate pooled from similar shops, and delivered by the same riders." },
+    { view: "compare", trail: ["notif", "today"], setup: () => tourCard("pricewar"), sel: ".options", t: "Compare before acting",
+      p: () => "Matching the big brands' 35% cut loses money. Few shops nearby offer anything around ฿150: that is the gap a set fills. The coach's pick still wins if customers react badly, and keeps at least 3 weeks of cash." },
+    { view: "try", trail: ["notif", "today", "compare"], setup: () => { tourCard("pricewar"); state.days = 7; state.cap = 30; }, sel: ".risk", t: "Try it small",
+      p: () => "A 7-day test on the platform, stopped after 30 orders. The worst case is shown first, so a wrong guess can only cost a little." },
+    { view: "result", trail: ["notif", "today", "compare", "try"], setup: () => { tourCard("pricewar"); state.days = 7; state.cap = 30; runTest(); }, sel: ".headline", t: "Prove it",
+      p: () => "The real result against the forecast, one lesson in plain words, the skill it practised and a learning streak. This is how learning turns into action." },
+    { view: "ask", trail: ["notif", "today"], setup: () => { state.chatQ = "essay"; }, sel: ".convo", t: "Ask the coach",
+      p: () => "Shop questions are answered from the shop's own numbers. Off-topic requests, like this essay, are stopped by a small gate model, so the free AI stays a shop tool." },
+    { view: "today", trail: ["notif"], setup: () => { state.chatQ = null; }, sel: null, t: "Your turn",
+      p: () => "That is the loop: Notification → Today → Compare → Try small → Result. Tap any card to rehearse it, or ‹ to go back a screen." }
+  ];
+
+  function startTour() { state.tour = 0; showStep(); }
+  function showStep() {
+    const s = TOUR[state.tour];
+    if (s.setup) s.setup();
+    trail.length = 0; trail.push(...s.trail);
+    state.view = s.view;
+    render(true);
+  }
+  function renderTour() {
+    if (state.tour == null) { tip.hidden = true; screen.style.paddingBottom = ""; return; }
+    const s = TOUR[state.tour], last = state.tour === TOUR.length - 1;
+    tip.innerHTML = `
+      <span class="tstep">Tour · ${state.tour + 1} of ${TOUR.length}</span>
+      <b>${s.t}</b>
+      <p>${s.p()}</p>
+      <div class="tbtns">
+        ${last ? "" : `<button class="tskip" data-act="tour-end">Skip</button>`}
+        ${state.tour > 0 ? `<button class="tprev" data-act="tour-prev">Back</button>` : ""}
+        <button class="tnext" data-act="${last ? "tour-end" : "tour-next"}">${last ? "Explore" : "Next"}</button>
+      </div>`;
+    tip.hidden = false;
+    screen.style.paddingBottom = (tip.offsetHeight + 24) + "px";
+    const el = s.sel && screen.querySelector(s.sel);
+    if (el) {
+      el.classList.add("tour-hi");
+      // Scroll only when the element is not already clear of the header and the tip.
+      const top = document.getElementById("app").querySelector(".app-head").getBoundingClientRect().bottom + 8;
+      const room = tip.getBoundingClientRect().top - 12;
+      let r = el.getBoundingClientRect();
+      if (r.top < top || r.bottom > room) {
+        el.scrollIntoView({ block: "center" });
+        r = el.getBoundingClientRect();
+        if (r.bottom > room) {
+          if (getComputedStyle(screen).overflowY === "visible") window.scrollBy(0, r.bottom - room);
+          else screen.scrollTop += r.bottom - room;
+        }
+      }
+    }
+  }
+  function endTour() { state.tour = null; render(); }
+
+  document.getElementById("app").addEventListener("click", e => {
+    const t = e.target.closest("[data-act]");
+    if (!t) return;
+    const v = t.dataset.v;
+    switch (t.dataset.act) {
+      case "go": go(v); break;
+      case "back": back(); break;
+      case "open": go("today"); break;
+      case "month": go("month"); break;
+      case "card": openCard(v); break;
+      case "opt": state.option = Number(v); render(); break;
+      case "sing": state.supplyIng = v; state.option = pickOf(optionsOf("supplier")); render(); break;
+      case "days": state.days = Number(v); render(); break;
+      case "cap": state.cap = Number(v); render(); break;
+      case "run": runTest(); go("result"); break;
+      case "save": savePlan(); go("result"); break;
+      case "rate": state.rating = Number(v); render(); break;
+      case "q": state.chatQ = state.chatQ === v ? null : v; render(); break;
+      case "ask-set": openCard("pricewar", 2); break;
+      case "receipt": state.showReceipt = !state.showReceipt; render(); break;
+      case "equip": state.equipAdded = true; render(); break;
+      case "tour": startTour(); break;
+      case "tour-next": state.tour++; showStep(); break;
+      case "tour-prev": state.tour--; showStep(); break;
+      case "tour-end": endTour(); break;
+    }
+  });
+  document.getElementById("app").addEventListener("change", e => {
+    if (e.target.id === "consent") { state.consent = e.target.checked; render(); }
+  });
+  document.getElementById("briefTour").addEventListener("click", () => { document.getElementById("app").scrollIntoView({ block: "start", behavior: "smooth" }); startTour(); });
+
+  // Deep link from Shop Counter: #card=loan opens that card's Compare screen, with Today behind it.
+  const deep = typeof location !== "undefined" ? (/card=(\w+)/.exec(location.hash) || [])[1] : null;
+  if (deep && CARDS[deep]) { trail.push("notif", "today"); tourCard(deep); state.view = "compare"; }
+  else if (typeof location !== "undefined" && /^#today/.test(location.hash)) { trail.push("notif"); state.view = "today"; }
+  // The way back to the other tool, in the header of every screen.
+  document.getElementById("shopSub").innerHTML = `Sample shop · <a href="${COUNTER}"${EXT}>Counter ›</a>`;
+
+  render();
+})();
+</script>
+
+</body>
+</html>
